@@ -1,3 +1,9 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c0a0a">
 <title>Иван Крылов</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Иван Крылов — видео: нейросети, реклама, YouTube, подкасты, Reels, автомобили.">
@@ -18,6 +24,9 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+img{max-width:100%}
 html{scroll-behavior:smooth}
 body{background:var(--ink);color:var(--bone);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--ink)}
@@ -147,6 +156,9 @@ a{color:inherit}
   html{scroll-behavior:auto}
 }
 </style>
+</head>
+<body>
+
 
 <nav class="nav" aria-label="Разделы">
   <div class="wrap">
@@ -335,3 +347,6 @@ document.querySelectorAll(".copy").forEach(b => b.addEventListener("click", () =
 }));
 function selectText(b){ const h = b.parentElement.querySelector(".h"); const r = document.createRange(); r.selectNodeContents(h); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
 </script>
+
+</body>
+</html>
