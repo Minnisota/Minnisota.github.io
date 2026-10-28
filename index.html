@@ -243,7 +243,7 @@ a{color:inherit}
 </div>
 
 <script>
-const HERO_ID = "ao9F8nWbsug", HERO_START = 27.5;
+const HERO_ID = "ao9F8nWbsug", HERO_START = 27;
 const yt = id => ({p:"YouTube", yt:id, url:"https://youtu.be/"+id});
 const tg = (url, n) => ({p:"Telegram", url, n});
 const CATS = [
@@ -337,11 +337,11 @@ window.onYouTubeIframeAPIReady = () => {
   evs.forEach(ev => document.addEventListener(ev, firstTouch, {passive:true}));
   window.bgp = new YT.Player("bgplayer", {
     videoId: HERO_ID,
-    playerVars: {autoplay:1, mute:0, controls:0, start:Math.floor(HERO_START), loop:0, playsinline:1, rel:0, modestbranding:1, iv_load_policy:3, disablekb:1},
+    playerVars: {autoplay:1, mute:0, controls:0, start:HERO_START, loop:0, playsinline:1, rel:0, modestbranding:1, iv_load_policy:3, disablekb:1},
     events: {
       onReady: e => {
         /* try to start with quiet sound; if the browser forbids it, play muted and turn sound on at the first click */
-        e.target.setVolume(VOL); e.target.unMute(); e.target.seekTo(HERO_START, true); e.target.playVideo(); touched();
+        e.target.setVolume(VOL); touched();
         setTimeout(() => {
           const playing = bgp.getPlayerState() === YT.PlayerState.PLAYING;
           if (playing && !bgp.isMuted()) setSound(true);
@@ -351,7 +351,7 @@ window.onYouTubeIframeAPIReady = () => {
         /* reveal the video only after it has been playing for a moment with no player commands,
            so YouTube's play/pause and volume icons have already faded out */
         const reveal = setInterval(() => {
-          if (bgp.getPlayerState() === YT.PlayerState.PLAYING && performance.now() - lastCmd > 900) {
+          if (bgp.getPlayerState() === YT.PlayerState.PLAYING && performance.now() - lastCmd > 1600) {
             hv.classList.add("on"); clearInterval(reveal);
           }
         }, 100);
