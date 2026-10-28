@@ -241,7 +241,7 @@ a{color:inherit}
 </div>
 
 <script>
-const HERO_ID = "ao9F8nWbsug", HERO_START = 27;
+const HERO_ID = "ao9F8nWbsug", HERO_START = 28;
 const yt = id => ({p:"YouTube", yt:id, url:"https://youtu.be/"+id});
 const tg = (url, n) => ({p:"Telegram", url, n});
 const CATS = [
@@ -307,7 +307,7 @@ const hv = document.getElementById("heroVideo");
 function fitVideo(){
   const f = hv.querySelector("iframe"); if (!f) return;
   const w = hv.clientWidth, h = hv.clientHeight;
-  const W = Math.max(w, h*16/9), H = W*9/16;
+  const W = Math.max(w, h*16/9)*1.12, H = W*9/16;
   f.style.width = W+"px"; f.style.height = Math.max(H,h)+"px";
 }
 window.addEventListener("resize", fitVideo);
@@ -337,8 +337,14 @@ window.onYouTubeIframeAPIReady = () => {
     events: {
       onReady: e => { e.target.mute(); e.target.setVolume(VOL); e.target.playVideo(); fitVideo(); btn.hidden = false; },
       onStateChange: e => {
-        if (e.data === YT.PlayerState.PLAYING) hv.classList.add("on");
-        if (e.data === YT.PlayerState.ENDED) { e.target.seekTo(HERO_START); e.target.playVideo(); }
+        /* show the video only after YouTube's start-up icons have faded out */
+        if (e.data === YT.PlayerState.PLAYING && !hv.classList.contains("on")) setTimeout(() => hv.classList.add("on"), 1500);
+        /* loop a moment before the end, so the end-screen and replay icon never appear */
+        if (e.data === YT.PlayerState.PLAYING && !window.loopTimer) window.loopTimer = setInterval(() => {
+          const d = bgp.getDuration(), c = bgp.getCurrentTime();
+          if (d && c > d - 1.2) bgp.seekTo(HERO_START, true);
+        }, 300);
+        if (e.data === YT.PlayerState.ENDED) { e.target.seekTo(HERO_START, true); e.target.playVideo(); }
       }
     }
   });
