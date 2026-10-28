@@ -67,6 +67,7 @@ a{color:inherit}
 .hero-copy{padding-block:clamp(96px,14vw,140px) clamp(56px,8vw,96px);width:100%}
 .hero h1{font-family:var(--f-display);font-weight:800;font-size:clamp(44px,9vw,112px);line-height:.92;letter-spacing:-.02em;margin:0;text-wrap:balance;text-transform:uppercase}
 .hero h1 span{display:block;width:fit-content;color:var(--red);position:relative;z-index:1}
+.hero h1 .last{font-weight:inherit;display:inline-block}
 
 .hero p{max-width:34ch;margin:22px 0 0;font-size:clamp(16px,1.6vw,19px);color:var(--bone);opacity:.9}
 .hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
@@ -181,7 +182,7 @@ a{color:inherit}
   <div class="hero-video" id="heroVideo"><div id="bgplayer"></div></div>
   <button class="sound" type="button" id="soundBtn" hidden aria-pressed="false"><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span><span id="soundTxt">Включить звук</span></button>
   <div class="wrap hero-copy">
-    <h1>Иван<span>Крылов</span></h1>
+    <h1>Иван<span>Крыло<b class="last">в</b></span></h1>
     <p>Снимаю и монтирую видео: реклама, YouTube, Reels, подкасты, автомобили и ролики с нейросетями.</p>
     <div class="hero-cta">
       <a class="btn solid" href="#work">Смотреть работы</a>
@@ -362,16 +363,18 @@ window.onYouTubeIframeAPIReady = () => {
 /* place the name so the end of "Крылов" sits over the centre of the video, where YouTube shows its pause icon */
 function placeName(){
   const hero = document.querySelector(".hero"), copy = hero.querySelector(".hero-copy"),
-        h1 = copy.querySelector("h1"), sp = h1.querySelector("span");
-  copy.style.transform = h1.style.transform = "none";
-  const hr = hero.getBoundingClientRect(), r = sp.getBoundingClientRect(), cr = copy.getBoundingClientRect();
-  const fs = parseFloat(getComputedStyle(h1).fontSize);
+        last = copy.querySelector("h1 .last");
+  copy.style.transform = "none";
+  const hr = hero.getBoundingClientRect(), lr = last.getBoundingClientRect(), cr = copy.getBoundingClientRect();
+  const inner = copy.querySelector("h1").getBoundingClientRect();
   const cx = hr.left + hr.width/2, cy = hr.top + hr.height/2;
-  const lastX = r.right - fs*0.45;                                   // middle of the last letter
-  const dx = Math.max(0, Math.min(cx - lastX, hr.right - 16 - r.right));
-  let dy = cy - (r.top + r.height/2);
-  dy = Math.max(dy, hr.top + 72 - cr.top);                            // keep clear of the top bar
-  dy = Math.min(dy, hr.bottom - cr.bottom);                           // and of the bottom edge
+  /* centre of the last letter goes exactly onto the centre of the video */
+  let dx = cx - (lr.left + lr.width/2);
+  dx = Math.max(dx, hr.left + 16 - inner.left);                       // keep the text on screen on the left
+  dx = Math.min(dx, hr.right - 16 - lr.right);                         // and on the right
+  let dy = cy - (lr.top + lr.height/2);
+  dy = Math.max(dy, hr.top + 72 - cr.top);
+  dy = Math.min(dy, hr.bottom - cr.bottom);
   copy.style.transform = `translate(${dx}px, ${dy}px)`;
 }
 placeName();
