@@ -66,8 +66,7 @@ a{color:inherit}
 .tc{font-variant-numeric:tabular-nums}
 .hero-copy{padding-block:clamp(96px,14vw,140px) clamp(56px,8vw,96px);width:100%}
 .hero h1{font-family:var(--f-display);font-weight:800;font-size:clamp(44px,9vw,112px);line-height:.92;letter-spacing:-.02em;margin:0;text-wrap:balance;text-transform:uppercase}
-.hero h1 span{display:block;width:fit-content;color:var(--red);position:relative;z-index:1}
-.hero h1 .last{font-weight:inherit;display:inline-block}
+.hero h1 span{display:block;color:var(--red)}
 
 .hero p{max-width:34ch;margin:22px 0 0;font-size:clamp(16px,1.6vw,19px);color:var(--bone);opacity:.9}
 .hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
@@ -182,7 +181,7 @@ a{color:inherit}
   <div class="hero-video" id="heroVideo"><div id="bgplayer"></div></div>
   <button class="sound" type="button" id="soundBtn" hidden aria-pressed="false"><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span><span id="soundTxt">Включить звук</span></button>
   <div class="wrap hero-copy">
-    <h1>Иван<span>Крыло<b class="last">в</b></span></h1>
+    <h1>Иван<span>Крылов</span></h1>
     <p>Снимаю и монтирую видео: реклама, YouTube, Reels, подкасты, автомобили и ролики с нейросетями.</p>
     <div class="hero-cta">
       <a class="btn solid" href="#work">Смотреть работы</a>
@@ -316,12 +315,14 @@ function fitVideo(){
 window.addEventListener("resize", fitVideo);
 window.onYouTubeIframeAPIReady = () => {
   window.ytReady = true;
-  const VOL = 15; let soundOn = false, userMuted = false;
+  const VOL = 15; let soundOn = false, userMuted = false, lastCmd = performance.now();
+  const touched = () => { lastCmd = performance.now(); };
   const btn = document.getElementById("soundBtn"), txt = document.getElementById("soundTxt");
   const setSound = on => {
     if (!window.bgp || !bgp.unMute) return;
     soundOn = on;
-    if (on) { bgp.setVolume(VOL); bgp.unMute(); } else bgp.mute();
+    if (on && bgp.isMuted()) { bgp.setVolume(VOL); bgp.unMute(); touched(); }
+    if (!on && !bgp.isMuted()) { bgp.mute(); touched(); }
     btn.classList.toggle("on", on); btn.setAttribute("aria-pressed", on);
     txt.textContent = on ? "Выключить звук" : "Включить звук";
   };
@@ -340,14 +341,22 @@ window.onYouTubeIframeAPIReady = () => {
     events: {
       onReady: e => {
         /* try to start with quiet sound; if the browser forbids it, play muted and turn sound on at the first click */
-        e.target.setVolume(VOL); e.target.unMute(); e.target.seekTo(HERO_START, true); e.target.playVideo();
+        e.target.setVolume(VOL); e.target.unMute(); e.target.seekTo(HERO_START, true); e.target.playVideo(); touched();
         setTimeout(() => {
           const playing = bgp.getPlayerState() === YT.PlayerState.PLAYING;
           if (playing && !bgp.isMuted()) setSound(true);
-          else { bgp.mute(); bgp.playVideo(); setSound(false); }
-        }, 900); fitVideo(); btn.hidden = false; },
+          else { bgp.mute(); bgp.playVideo(); touched(); setSound(false); }
+        }, 700);
+        fitVideo(); btn.hidden = false;
+        /* reveal the video only after it has been playing for a moment with no player commands,
+           so YouTube's play/pause and volume icons have already faded out */
+        const reveal = setInterval(() => {
+          if (bgp.getPlayerState() === YT.PlayerState.PLAYING && performance.now() - lastCmd > 900) {
+            hv.classList.add("on"); clearInterval(reveal);
+          }
+        }, 100);
+      },
       onStateChange: e => {
-                if (e.data === YT.PlayerState.PLAYING) hv.classList.add("on");
         /* loop a moment before the end, so the end-screen and replay icon never appear */
         if (e.data === YT.PlayerState.PLAYING && !window.loopTimer) window.loopTimer = setInterval(() => {
           const d = bgp.getDuration(), c = bgp.getCurrentTime();
@@ -359,28 +368,6 @@ window.onYouTubeIframeAPIReady = () => {
   });
 };
 (() => { const s = document.createElement("script"); s.src = "https://www.youtube.com/iframe_api"; s.async = true; document.head.appendChild(s); })();
-
-/* place the name so the end of "Крылов" sits over the centre of the video, where YouTube shows its pause icon */
-function placeName(){
-  const hero = document.querySelector(".hero"), copy = hero.querySelector(".hero-copy"),
-        last = copy.querySelector("h1 .last");
-  copy.style.transform = "none";
-  const hr = hero.getBoundingClientRect(), lr = last.getBoundingClientRect(), cr = copy.getBoundingClientRect();
-  const inner = copy.querySelector("h1").getBoundingClientRect();
-  const cx = hr.left + hr.width/2, cy = hr.top + hr.height/2;
-  /* centre of the last letter goes exactly onto the centre of the video */
-  let dx = cx - (lr.left + lr.width/2);
-  dx = Math.max(dx, hr.left + 16 - inner.left);                       // keep the text on screen on the left
-  dx = Math.min(dx, hr.right - 16 - lr.right);                         // and on the right
-  let dy = cy - (lr.top + lr.height/2);
-  dy = Math.max(dy, hr.top + 72 - cr.top);
-  dy = Math.min(dy, hr.bottom - cr.bottom);
-  copy.style.transform = `translate(${dx}px, ${dy}px)`;
-}
-placeName();
-window.addEventListener("resize", placeName);
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeName);
-window.addEventListener("load", placeName);
 
 /* lightbox */
 const lb = document.getElementById("lb"), lbBox = document.getElementById("lbBox");
