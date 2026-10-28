@@ -49,7 +49,7 @@ a{color:inherit}
 .hero{position:relative;min-height:clamp(560px,86svh,860px);display:flex;align-items:flex-end;overflow:hidden;isolation:isolate;background:var(--ink)}
 .hero-poster{position:absolute;inset:0;z-index:-3;background:radial-gradient(circle at 72% 38%,var(--red) 0 22%,var(--red-deep) 34%,transparent 58%),var(--ink)}
 .hero-poster img{position:absolute;right:0;bottom:0;height:100%;width:auto;max-width:none;object-fit:cover;opacity:.9;mask-image:linear-gradient(90deg,transparent,#000 35%);-webkit-mask-image:linear-gradient(90deg,transparent,#000 35%)}
-.hero-video{position:absolute;inset:0;z-index:-2;opacity:0;transition:opacity 1.2s ease;pointer-events:none}
+.hero-video{position:absolute;inset:0;z-index:-2;opacity:0;transition:opacity .4s ease;pointer-events:none}
 .hero-video.on{opacity:1}
 .hero-video iframe,.hero-video #bgplayer{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border:0}
 .hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(12,10,10,.35) 0%,rgba(12,10,10,.15) 40%,rgba(12,10,10,.92) 100%)}
@@ -66,7 +66,8 @@ a{color:inherit}
 .tc{font-variant-numeric:tabular-nums}
 .hero-copy{padding-block:clamp(96px,14vw,140px) clamp(56px,8vw,96px);width:100%}
 .hero h1{font-family:var(--f-display);font-weight:800;font-size:clamp(44px,9vw,112px);line-height:.92;letter-spacing:-.02em;margin:0;text-wrap:balance;text-transform:uppercase}
-.hero h1 span{display:block;color:var(--red)}
+.hero h1 span{display:block;width:fit-content;color:var(--red);position:relative;z-index:1}
+
 .hero p{max-width:34ch;margin:22px 0 0;font-size:clamp(16px,1.6vw,19px);color:var(--bone);opacity:.9}
 .hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:99px;font-weight:600;font-size:15px;text-decoration:none;border:1px solid var(--bone);transition:background .2s,color .2s,border-color .2s}
@@ -144,6 +145,7 @@ a{color:inherit}
 .clients b{display:block;font-weight:600}
 .clients small{color:var(--mute);font-size:13px}
 .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:40px}
+
 
 /* lightbox */
 .lb{position:fixed;inset:0;z-index:100;background:rgba(8,6,6,.94);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -337,8 +339,7 @@ window.onYouTubeIframeAPIReady = () => {
     events: {
       onReady: e => { e.target.mute(); e.target.setVolume(VOL); e.target.playVideo(); fitVideo(); btn.hidden = false; },
       onStateChange: e => {
-        /* show the video only after YouTube's start-up icons have faded out */
-        if (e.data === YT.PlayerState.PLAYING && !hv.classList.contains("on")) setTimeout(() => hv.classList.add("on"), 1500);
+                if (e.data === YT.PlayerState.PLAYING) hv.classList.add("on");
         /* loop a moment before the end, so the end-screen and replay icon never appear */
         if (e.data === YT.PlayerState.PLAYING && !window.loopTimer) window.loopTimer = setInterval(() => {
           const d = bgp.getDuration(), c = bgp.getCurrentTime();
@@ -350,6 +351,26 @@ window.onYouTubeIframeAPIReady = () => {
   });
 };
 (() => { const s = document.createElement("script"); s.src = "https://www.youtube.com/iframe_api"; s.async = true; document.head.appendChild(s); })();
+
+/* place the name so the end of "Крылов" sits over the centre of the video, where YouTube shows its pause icon */
+function placeName(){
+  const hero = document.querySelector(".hero"), copy = hero.querySelector(".hero-copy"),
+        h1 = copy.querySelector("h1"), sp = h1.querySelector("span");
+  copy.style.transform = h1.style.transform = "none";
+  const hr = hero.getBoundingClientRect(), r = sp.getBoundingClientRect(), cr = copy.getBoundingClientRect();
+  const fs = parseFloat(getComputedStyle(h1).fontSize);
+  const cx = hr.left + hr.width/2, cy = hr.top + hr.height/2;
+  const lastX = r.right - fs*0.45;                                   // middle of the last letter
+  const dx = Math.max(0, Math.min(cx - lastX, hr.right - 16 - r.right));
+  let dy = cy - (r.top + r.height/2);
+  dy = Math.max(dy, hr.top + 72 - cr.top);                            // keep clear of the top bar
+  dy = Math.min(dy, hr.bottom - cr.bottom);                           // and of the bottom edge
+  copy.style.transform = `translate(${dx}px, ${dy}px)`;
+}
+placeName();
+window.addEventListener("resize", placeName);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeName);
+window.addEventListener("load", placeName);
 
 /* lightbox */
 const lb = document.getElementById("lb"), lbBox = document.getElementById("lbBox");
