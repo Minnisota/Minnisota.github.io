@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:wdth,wght@100,400;100,500;100,600;100,700;125,400;125,500;125,600&amp;family=Montserrat:wght@400;500;600;700&amp;family=Exo+2:wght@400;500;600;700&amp;family=Oswald:wght@400;500;600;700&amp;family=Rubik:wght@400;500;600;700&amp;family=Russo+One&amp;family=Unbounded:wght@400;500;600;700&amp;family=Roboto+Condensed:wght@400;500;600;700&amp;display=swap">
+<style>[data-omelette-chrome]{display:none!important}html,body{margin:0;height:100%;background:#000;overflow:hidden}a{color:#ff6b0f}a:hover{color:#ffa060}</style>
+<script>window.OM_SCENES = '[{"name":"Badge","dur":4,"desc":"Badge rises, bar wipes, icon draws, values count up, hold, fade"}]';</script>
+<script>window.OM_PLAYBACK = '{"mode":"loop"}';</script>
+</helmet>
+<div style="position:fixed;inset:0;background:#000">
+<x-import component-from-global-scope="BadgeApp" from="./animations-v3.jsx ./badges.jsx" dc-props="{{ all }}" hint-size="100%,100%"></x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;brand&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;ZEEKR&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Text&quot;},&quot;name&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;IVAN KRYLOV&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Text&quot;},&quot;nameFont&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Saira&quot;,&quot;options&quot;:[&quot;Saira&quot;,&quot;Montserrat&quot;,&quot;Exo 2&quot;,&quot;Oswald&quot;,&quot;Rubik&quot;,&quot;Russo One&quot;,&quot;Unbounded&quot;,&quot;Roboto Condensed&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Name font&quot;},&quot;nameSize&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:40,&quot;min&quot;:20,&quot;max&quot;:80,&quot;step&quot;:1,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Name font&quot;},&quot;nameWeight&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;600&quot;,&quot;options&quot;:[&quot;400&quot;,&quot;500&quot;,&quot;600&quot;,&quot;700&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Name font&quot;},&quot;nameSpacing&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0,&quot;min&quot;:-0.05,&quot;max&quot;:0.4,&quot;step&quot;:0.01,&quot;unit&quot;:&quot;em&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Name font&quot;},&quot;brandFont&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Saira&quot;,&quot;options&quot;:[&quot;Saira&quot;,&quot;Montserrat&quot;,&quot;Exo 2&quot;,&quot;Oswald&quot;,&quot;Rubik&quot;,&quot;Russo One&quot;,&quot;Unbounded&quot;,&quot;Roboto Condensed&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Brand font&quot;},&quot;brandSize&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:40,&quot;min&quot;:20,&quot;max&quot;:80,&quot;step&quot;:1,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Brand font&quot;},&quot;brandSpacing&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.3,&quot;min&quot;:0,&quot;max&quot;:0.6,&quot;step&quot;:0.01,&quot;unit&quot;:&quot;em&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Brand font&quot;},&quot;textAlign&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Left&quot;,&quot;options&quot;:[&quot;Left&quot;,&quot;Center&quot;,&quot;Right&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Position&quot;},&quot;textX&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0,&quot;min&quot;:-600,&quot;max&quot;:600,&quot;step&quot;:1,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Position&quot;},&quot;textY&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0,&quot;min&quot;:-30,&quot;max&quot;:30,&quot;step&quot;:1,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Position&quot;},&quot;gap&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:30,&quot;min&quot;:0,&quot;max&quot;:120,&quot;step&quot;:1,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Position&quot;},&quot;showLogo&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Position&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ff6b0f&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#ff6b0f&quot;,&quot;#ffb21f&quot;,&quot;#2fc9b8&quot;,&quot;#e9e9e6&quot;],&quot;section&quot;:&quot;Style&quot;},&quot;greenScreen&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Background&quot;},&quot;fadeOut&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Style&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const D = {"kind":"name","brand":"ZEEKR","name":"IVAN KRYLOV"};
+    const all = { ...D };
+    for (const k in this.props) if (this.props[k] !== undefined && k !== 'children') all[k] = this.props[k];
+    return { all };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:wdth,wght@125,400;125,500;125,600&amp;display=swap">
+<style>[data-omelette-chrome]{display:none!important}html,body{margin:0;height:100%;background:#000;overflow:hidden}a{color:#ff6b0f}a:hover{color:#ffa060}</style>
+<script>window.OM_SCENES = '[{"name":"Card","dur":4,"desc":"Card rises, bar wipes, icon draws, values count up, hold, fade"}]';</script>
+<script>window.OM_PLAYBACK = '{"mode":"loop"}';</script>
+</helmet>
+<div style="position:fixed;inset:0;background:#000">
+<x-import component-from-global-scope="PowerCardApp" from="./animations-v3.jsx ./power-card.jsx" label="{{ label }}" value="{{ value }}" sub="{{ sub }}" accent="{{ accent }}" fade-out="{{ fadeOut }}" green-screen="{{ greenScreen }}" hint-size="100%,100%"></x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;label&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;POWER&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Text&quot;},&quot;value&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;400 kW&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Text&quot;},&quot;sub&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;(544 hp)&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Text&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ff6b0f&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#ff6b0f&quot;,&quot;#ffb21f&quot;,&quot;#2fc9b8&quot;,&quot;#e9e9e6&quot;],&quot;section&quot;:&quot;Style&quot;},&quot;fadeOut&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Style&quot;},&quot;greenScreen&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Background&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    return { label: p.label ?? 'POWER', value: p.value ?? '400 kW', sub: p.sub ?? '(544 hp)', accent: p.accent ?? '#ff6b0f', fadeOut: p.fadeOut ?? true, greenScreen: p.greenScreen ?? false };
+  }
+}
+</script>
+</body>
+</html>
