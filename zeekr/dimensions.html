@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:wdth,wght@100,400;100,500;125,400;125,500;125,600&amp;display=swap">
+<style>[data-omelette-chrome]{display:none!important}html,body{margin:0;height:100%;background:#000;overflow:hidden}a{color:#ff6b0f}a:hover{color:#ffa060}</style>
+<script>window.OM_SCENES = '[{"name":"Badge","dur":4,"desc":"Badge rises, bar wipes, icon draws, values count up, hold, fade"}]';</script>
+<script>window.OM_PLAYBACK = '{"mode":"loop"}';</script>
+</helmet>
+<div style="position:fixed;inset:0;background:#000">
+<x-import component-from-global-scope="BadgeApp" from="./animations-v3.jsx ./badges.jsx" dc-props="{{ all }}" hint-size="100%,100%"></x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;label&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Text&quot;,&quot;default&quot;:&quot;DIMENSIONS&quot;},&quot;l1&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Text&quot;,&quot;default&quot;:&quot;LENGTH&quot;},&quot;v1&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Text&quot;,&quot;default&quot;:&quot;4,970 mm&quot;},&quot;l2&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Text&quot;,&quot;default&quot;:&quot;WIDTH&quot;},&quot;v2&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Text&quot;,&quot;default&quot;:&quot;1,999 mm&quot;},&quot;l3&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Text&quot;,&quot;default&quot;:&quot;HEIGHT&quot;},&quot;v3&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Text&quot;,&quot;default&quot;:&quot;1,560 mm&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ff6b0f&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#ff6b0f&quot;,&quot;#ffb21f&quot;,&quot;#2fc9b8&quot;,&quot;#e9e9e6&quot;],&quot;section&quot;:&quot;Style&quot;},&quot;greenScreen&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Background&quot;},&quot;fadeOut&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Style&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const D = {"kind":"dims","icon":"logo","label":"DIMENSIONS","l1":"LENGTH","v1":"4,970 mm","l2":"WIDTH","v2":"1,999 mm","l3":"HEIGHT","v3":"1,560 mm","photo":"uploads/07_dimensions_with_vehicle_native.png","photoW":700};
+    const all = { ...D };
+    for (const k in this.props) if (this.props[k] !== undefined && k !== 'children') all[k] = this.props[k];
+    return { all };
+  }
+}
+</script>
+</body>
+</html>

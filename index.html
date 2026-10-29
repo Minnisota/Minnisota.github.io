@@ -168,6 +168,16 @@ a{color:inherit}
 .folder-body{position:relative;display:flex;align-items:center;gap:18px;padding:22px;background:var(--char-2);border:1px solid var(--line);border-radius:0 8px 8px 8px;transition:border-color .25s,background .25s}
 .folder:hover .folder-body,.folder:hover .folder-tab{border-color:var(--red)}
 .folder:hover .folder-body{background:color-mix(in srgb,var(--char-2) 85%,var(--red))}
+
+.ai-side .folder{height:100%}
+.ai-side .folder-body{flex-direction:column;align-items:stretch;gap:20px;height:calc(100% - 0px)}
+.folder-row{display:flex;align-items:center;gap:16px}
+.folder-peek{position:relative;display:block;aspect-ratio:16/7;border-radius:6px;overflow:hidden;background:#000;border:1px solid var(--line)}
+.peek-card{position:absolute;overflow:hidden;border-radius:6px;box-shadow:0 12px 30px rgba(0,0,0,.6)}
+.peek-card.p1{inset:6% 22% 30% 4%;opacity:.55;transform:rotate(-2.5deg)}
+.peek-card.p2{inset:26% 4% 8% 20%}
+.folder:hover .peek-card.p1{transform:rotate(-4deg) translate(-6px,-6px);transition:transform .35s}
+.folder:hover .peek-card.p2{transform:translate(4px,4px);transition:transform .35s}
 .folder-icon{position:relative;flex:none;width:64px;height:48px}
 .folder-icon i{position:absolute;inset:0;border-radius:5px;background:#000;border:1px solid var(--line)}
 .folder-icon i:nth-child(1){transform:rotate(-8deg) translate(-4px,2px)}
@@ -295,15 +305,15 @@ const tg = (url, n) => ({p:"Telegram", url, n});
 const CFS = [{"f": "cfs-01", "t": "Куриное фрикасе с макаронами", "v": true}, {"f": "cfs-02", "t": "Куриный бульон", "v": true}, {"f": "cfs-03", "t": "Окорочок запечённый", "v": true}, {"f": "cfs-04", "t": "Пицца", "v": true}, {"f": "cfs-05", "t": "Пицца 2", "v": true}, {"f": "cfs-06", "t": "Поджарка с гречей", "v": true}, {"f": "cfs-07", "t": "Рагу с корнеплодами", "v": true}, {"f": "cfs-08", "t": "Фрикадельки в брусничном соусе", "v": true}, {"f": "cfs-09", "t": "Чахохбили", "v": true}, {"f": "cfs-10", "t": "Черкизово", "v": false}, {"f": "cfs-11", "t": "Шаверма", "v": true}];
 /* motion graphics for ZEEKR: live HTML animations; z = zoom so the badge fills its card */
 const MG = [
-  {f:"zeekr-001", t:"ZEEKR 001", z:1.9, top:true},
-  {f:"power-card", t:"Power Card", z:1.6, top:true},
-  {f:"battery-range", t:"Battery · Range", z:1.9, top:true},
-  {f:"icon-charging", t:"Иконка · Charging", z:1.8, top:true},
+  {f:"dimensions", t:"Dimensions", z:1.28},
+  {f:"interior", t:"Interior", z:1.55},
+  {f:"zeekr-001", t:"ZEEKR 001", z:1.9},
+  {f:"power-card", t:"Power Card", z:1.6},
+  {f:"battery-range", t:"Battery · Range", z:1.9},
   {f:"name-reveal", t:"Name Reveal", z:1.9},
   {f:"acceleration", t:"Acceleration", z:2.4},
-  {f:"charging-time", t:"Charging Time", z:2.2},
   {f:"max-speed", t:"Max Speed", z:2.4},
-  {f:"icon-battery", t:"Иконка · Battery", z:1.8},
+  {f:"icon-charging", t:"Иконка · Charging", z:1.8},
   {f:"icon-station", t:"Иконка · Station map", z:1.8},
 ];
 const CATS = [
@@ -372,15 +382,17 @@ CATS.forEach(c => {
     const reel = document.createElement("div"); reel.className = "ai-reel";
     c.items.forEach((it,i) => reel.appendChild(card(it,i,"r916")));
     const side = document.createElement("div"); side.className = "ai-side";
-    const g = document.createElement("div"); g.className = "mg-grid";
-    MG.filter(m => m.top).forEach(m => g.appendChild(mgCard(m)));
-    side.appendChild(g);
     side.insertAdjacentHTML("beforeend", `<a class="folder" href="#motion-graphics">
         <span class="folder-tab" aria-hidden="true"></span>
         <span class="folder-body">
-          <span class="folder-icon" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="folder-txt"><span class="folder-name">Моушн-графика</span><span class="mono">ZEEKR · бейджи и иконки · ${MG.length} ${ru(MG.length)}</span></span>
-          <span class="folder-go">Открыть →</span>
+          <span class="folder-peek" aria-hidden="true">
+            <span class="peek-card p1 mg-frame" style="--z:1.5"><iframe data-src="zeekr/interior.html" tabindex="-1" title=""></iframe></span>
+            <span class="peek-card p2 mg-frame" style="--z:1.1"><iframe data-src="zeekr/dimensions.html" tabindex="-1" title=""></iframe></span>
+          </span>
+          <span class="folder-row">
+            <span class="folder-txt"><span class="folder-name">Моушн-графика</span><span class="mono">ZEEKR · бейджи и иконки · ${MG.length} ${ru(MG.length)}</span></span>
+            <span class="folder-go">Открыть папку →</span>
+          </span>
         </span>
       </a>`);
     home.append(reel, side);
