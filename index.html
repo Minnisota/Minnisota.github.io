@@ -157,6 +157,25 @@ a{color:inherit}
 .brand-head h3{font-family:var(--f-display);font-weight:600;font-size:clamp(20px,2.6vw,28px);margin:0}
 .brand-head h3 em{font-style:normal;color:var(--red)}
 .brand-wide{margin-bottom:16px}
+.brand-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:16px}
+.btile{position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:14px;min-height:240px;padding:20px;border:1px solid var(--line);border-radius:6px;overflow:hidden;text-decoration:none;color:var(--bone);background:var(--char);isolation:isolate;transition:border-color .25s,transform .25s}
+.btile:hover{border-color:var(--red);transform:translateY(-3px)}
+.btile-bg{position:absolute;inset:0;z-index:-1}
+.btile-bg img{width:100%;height:100%;object-fit:cover;opacity:.35;filter:grayscale(.4);transition:opacity .3s,transform .5s}
+.btile:hover .btile-bg img{opacity:.5;transform:scale(1.04)}
+.btile-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 20%,var(--char) 92%)}
+.btile-logo{align-self:flex-start;display:grid;place-items:center;height:64px;min-width:64px;padding:10px 16px;border-radius:6px;background:#f6f2ef}
+.btile-logo img{height:44px;width:auto;display:block}
+.btile-logo.img{padding:0;background:none}
+.btile-logo.img img{height:64px;border-radius:6px}
+.btile-logo b{font-family:var(--f-display);font-weight:800;font-size:24px;color:var(--ink)}
+.btile-txt{display:flex;flex-direction:column;gap:6px}
+.btile-name{font-family:var(--f-display);font-weight:600;font-size:clamp(18px,2.2vw,24px)}
+.btile-name em{font-style:normal;color:var(--red)}
+.back{display:inline-block;margin-bottom:18px;font:500 13px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--mute);text-decoration:none}
+.back:hover{color:var(--bone)}
+.brand-wide.after{margin:16px 0 0}
+
 .brand-wide.one{grid-template-columns:minmax(0,760px)}
 .car{position:relative}
 .car-track{display:flex;gap:16px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:4px;mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent)}
@@ -272,8 +291,8 @@ const CATS = [
    items:[{p:"Instagram", url:"https://www.instagram.com/reel/DTuvyC5jMnw/", n:"Reels"}]},
   {id:"ads", name:"Реклама", note:"Рекламные ролики для брендов.", shape:"brands",
    brands:[
-     {name:"Черкизово", em:"Food Service", items:CFS.map(v => ({p:"Видео", local:v.f, t:v.t, v:v.v, url:"cfs/"+v.f+".mp4"}))},
-     {name:"Другие", em:"проекты", items:[yt("ymegfolLM6g"), tg("https://t.me/krylovivn_media/6/59","59"), tg("https://t.me/krylovivn_media/6/101","101"), tg("https://t.me/krylovivn_media/6/109","109"), tg("https://t.me/krylovivn_media/6/150","150")]},
+     {id:"cherkizovo", logo:"cfs/logo.png", name:"Черкизово", em:"Food Service", items:CFS.map(v => ({p:"Видео", local:v.f, t:v.t, v:v.v, url:"cfs/"+v.f+".mp4"}))},
+     {id:"other", name:"Другие", em:"проекты", items:[yt("ymegfolLM6g"), tg("https://t.me/krylovivn_media/6/59","59"), tg("https://t.me/krylovivn_media/6/101","101"), tg("https://t.me/krylovivn_media/6/109","109"), tg("https://t.me/krylovivn_media/6/150","150")]},
    ]},
   {id:"youtube", name:"YouTube", note:"Съёмка и монтаж роликов для YouTube.", shape:"wide",
    items:[yt("ExyTx9QbQtY"), yt("g-KaVCnvbvY"), yt("6Ac7YRoX-0o")]},
@@ -323,23 +342,20 @@ CATS.forEach(c => {
     const ac = body.querySelector(".auto-cards");
     c.items.forEach((it,i) => ac.appendChild(card(it,i,"r169")));
   } else if (c.shape === "brands"){
+    /* brand tiles first; a tile opens that brand's videos (#brand-<id>), "Все бренды" goes back */
+    const tiles = document.createElement("div"); tiles.className = "brand-tiles";
+    body.appendChild(tiles);
     c.brands.forEach(b => {
-      const blk = document.createElement("div"); blk.className = "brand-block";
+      const n = b.items.length;
+      const cover = b.items.find(it => it.local) ;
+      tiles.insertAdjacentHTML("beforeend", `<a class="btile" href="#brand-${b.id}">
+          <span class="btile-bg">${cover ? `<img src="cfs/${cover.local}.jpg" alt="" loading="lazy">` : ""}</span>
+          <span class="btile-logo${b.logo ? " img" : ""}">${b.logo ? `<img src="${b.logo}" alt="${b.name} ${b.em}">` : `<b>${b.name[0]}</b>`}</span>
+          <span class="btile-txt"><span class="btile-name">${b.name} <em>${b.em}</em></span><span class="mono">${n} ${ru(n)} · Открыть →</span></span>
+        </a>`);
+      const blk = document.createElement("div"); blk.className = "brand-block"; blk.id = "brand-" + b.id; blk.hidden = true;
       const verts = b.items.filter(it => it.local && it.v), rest = b.items.filter(it => !(it.local && it.v));
-      blk.innerHTML = `<div class="brand-head"><h3>${b.name} <em>${b.em}</em></h3>${verts.length > 2 ? `<div class="car-btns"><button type="button" aria-label="Назад">←</button><button type="button" aria-label="Вперёд">→</button></div>` : `<span class="mono">${b.items.length} ${ru(b.items.length)}</span>`}</div>`;
-      if (rest.length){
-        const allTg = rest.every(it => !it.local);
-        if (allTg){
-          const top = document.createElement("div"); top.className = "grid g-wide brand-wide";
-          const bottom = document.createElement("div"); bottom.className = "grid g-tall";
-          rest.forEach((it,i) => (it.yt ? top : bottom).appendChild(card(it,i, it.yt ? "r169" : "r45")));
-          blk.append(top, bottom);
-        } else {
-          const g = document.createElement("div"); g.className = "grid g-wide brand-wide" + (rest.length === 1 ? " one" : "");
-          rest.forEach((it,i) => g.appendChild(card(it,i,"r169")));
-          blk.append(g);
-        }
-      }
+      blk.innerHTML = `<a class="back" href="#ads">← Все бренды</a><div class="brand-head"><h3>${b.name} <em>${b.em}</em></h3>${verts.length > 2 ? `<div class="car-btns"><button type="button" aria-label="Назад">←</button><button type="button" aria-label="Вперёд">→</button></div>` : `<span class="mono">${n} ${ru(n)}</span>`}</div>`;
       if (verts.length){
         const car = document.createElement("div"); car.className = "car";
         const tr = document.createElement("div"); tr.className = "car-track";
@@ -347,8 +363,28 @@ CATS.forEach(c => {
         car.append(tr); blk.append(car);
         carousel(tr, blk.querySelectorAll(".car-btns button"));
       }
+      if (rest.length){
+        if (rest.every(it => !it.local)){
+          const top = document.createElement("div"); top.className = "grid g-wide brand-wide";
+          const bottom = document.createElement("div"); bottom.className = "grid g-tall";
+          rest.forEach((it,i) => (it.yt ? top : bottom).appendChild(card(it,i, it.yt ? "r169" : "r45")));
+          blk.append(top, bottom);
+        } else {
+          const g = document.createElement("div"); g.className = "grid g-wide brand-wide after" + (rest.length === 1 ? " one" : "");
+          rest.forEach((it,i) => g.appendChild(card(it,i,"r169")));
+          blk.append(g);
+        }
+      }
       body.appendChild(blk);
     });
+    const route = () => {
+      const h = location.hash.slice(1), open = h.startsWith("brand-") && document.getElementById(h);
+      tiles.hidden = !!open;
+      body.querySelectorAll(".brand-block").forEach(b => b.hidden = b !== open);
+      if (open || h === "ads") requestAnimationFrame(() => s.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}));
+    };
+    window.addEventListener("hashchange", route);
+    setTimeout(route, 0);
   } else if (c.shape === "mix"){
     const top = document.createElement("div"); top.className = "grid g-wide";
     const bottom = document.createElement("div"); bottom.className = "grid g-tall"; bottom.style.marginTop = "16px";
