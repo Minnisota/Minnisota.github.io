@@ -590,7 +590,7 @@ function Stage({
         position: 'absolute', inset: 0,
         display: 'flex', flexDirection: 'column',
         alignItems: 'center',
-        background: '#0a0a0a',
+        background: '#000',
         fontFamily: 'Inter, system-ui, sans-serif',
       }}
     >

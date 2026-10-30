@@ -157,6 +157,11 @@ a{color:inherit}
 .brand-head h3{font-family:var(--f-display);font-weight:600;font-size:clamp(20px,2.6vw,28px);margin:0}
 .brand-head h3 em{font-style:normal;color:var(--red)}
 .brand-wide{margin-bottom:16px}
+.mg-all{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr))}
+.mg-all .meta{padding:9px 12px;font-size:13px}
+.mg-frame video.contain{object-fit:contain;transform:scale(1.15)}
+@media (max-width:520px){ .mg-all{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px} .mg-all .meta{font-size:12px;padding:7px 10px} }
+
 .ai-home{grid-template-columns:repeat(2,minmax(0,1fr))}
 .peek-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85;transition:transform .5s}
 .folder:hover .peek-img{transform:scale(1.04)}
@@ -408,15 +413,15 @@ CATS.forEach(c => {
   } else if (c.shape === "ai"){
     const mgCard = m => {
       const a = document.createElement("a"); a.className = "card mg"; a.rel = "noopener"; a.target = "_blank";
-      const ratio = m.icon ? "r11" : "r169";
+      const ratio = "r169";
       if (m.v){
         a.href = "zeekr/v/"+m.v+".mp4";
-        a.innerHTML = `<div class="thumb ${ratio} mg-frame"><video class="mg-vid" muted loop playsinline preload="none" poster="zeekr/v/${m.v}.jpg" data-src="zeekr/v/${m.v}.mp4"></video></div><div class="meta"><span class="ttl">${m.t}</span></div>`;
+        a.innerHTML = `<div class="thumb ${ratio} mg-frame"><video class="mg-vid contain" muted loop playsinline preload="none" poster="zeekr/v/${m.v}.jpg" data-src="zeekr/v/${m.v}.mp4"></video></div><div class="meta"><span class="ttl">${m.t}</span></div>`;
         a.addEventListener("click", e => { e.preventDefault(); openSquare("zeekr/v/"+m.v+".mp4"); });
       } else {
         a.href = "zeekr/"+m.f+".html";
-        const z = m.icon ? 1 : m.z;
-        a.innerHTML = `<div class="thumb ${ratio} mg-frame" style="--z:${z}"><iframe data-src="zeekr/${m.f}.html" title="${m.t}" tabindex="-1" loading="lazy" ${m.icon ? 'class="sq"' : ""}></iframe></div><div class="meta"><span class="ttl">${m.t}</span></div>`;
+        const z = m.icon ? 1.3 : m.z;
+        a.innerHTML = `<div class="thumb ${ratio} mg-frame" style="--z:${z}"><iframe data-src="zeekr/${m.f}.html" title="${m.t}" tabindex="-1" loading="lazy"></iframe></div><div class="meta"><span class="ttl">${m.t}</span></div>`;
         a.addEventListener("click", e => { e.preventDefault(); m.icon ? openSquareFrame("zeekr/"+m.f+".html") : openFrame("zeekr/"+m.f+".html"); });
       }
       return a;
@@ -426,10 +431,7 @@ CATS.forEach(c => {
     side.insertAdjacentHTML("beforeend", `<a class="folder" href="#motion-graphics">
         <span class="folder-tab" aria-hidden="true"></span>
         <span class="folder-body">
-          <span class="folder-peek" aria-hidden="true">
-            <span class="peek-card p1 mg-frame" style="--z:1.5"><iframe data-src="zeekr/interior.html" tabindex="-1" title=""></iframe></span>
-            <span class="peek-card p2 mg-frame" style="--z:1.1"><iframe data-src="zeekr/dimensions.html" tabindex="-1" title=""></iframe></span>
-          </span>
+          <span class="folder-peek" aria-hidden="true"><img class="peek-img" src="zeekr/thumb/folder.jpg" alt=""></span>
           <span class="folder-row">
             <span class="folder-txt"><span class="folder-name">Моушн-графика <em>ZMZEEKR</em></span><span class="mono">Плашки и иконки · ${MG.length} ${ru(MG.length)}</span></span>
             <span class="folder-go">Открыть папку →</span>
@@ -450,12 +452,9 @@ CATS.forEach(c => {
     home.append(side, autoSide);
     const view = document.createElement("div"); view.className = "brand-block"; view.id = "motion-graphics"; view.hidden = true;
     view.innerHTML = `<a class="back" href="#ai">← Нейросети</a><div class="brand-head"><h3>Моушн-графика <em>ZMZEEKR</em></h3><span class="mono">${MG.length} ${ru(MG.length)}</span></div>`;
-    [["Плашки", MG.filter(m => !m.icon), "mg-badges"], ["Иконки", MG.filter(m => m.icon), "mg-icons"]].forEach(([label, list, cls]) => {
-      view.insertAdjacentHTML("beforeend", `<p class="mg-sub mono">${label} · ${list.length}</p>`);
-      const g = document.createElement("div"); g.className = "mg-small " + cls;
-      list.forEach(m => g.appendChild(mgCard(m)));
-      view.appendChild(g);
-    });
+    const allg = document.createElement("div"); allg.className = "mg-all";
+    MG.forEach(m => allg.appendChild(mgCard(m)));
+    view.appendChild(allg);
     const autoView = document.createElement("div"); autoView.className = "brand-block"; autoView.id = "ai-auto"; autoView.hidden = true;
     autoView.innerHTML = `<a class="back" href="#ai">← Нейросети</a><div class="brand-head"><h3>Авто</h3><span class="mono">${AI_AUTO.length} ${ru(AI_AUTO.length)}</span></div>`;
     if (AI_AUTO.length){ const g = document.createElement("div"); g.className = "grid g-wide"; AI_AUTO.forEach((it,i) => g.appendChild(card(it,i,"r169"))); autoView.appendChild(g); }
