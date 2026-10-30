@@ -157,6 +157,16 @@ a{color:inherit}
 .brand-head h3{font-family:var(--f-display);font-weight:600;font-size:clamp(20px,2.6vw,28px);margin:0}
 .brand-head h3 em{font-style:normal;color:var(--red)}
 .brand-wide{margin-bottom:16px}
+.single{max-width:900px}
+.peek-empty{position:absolute;inset:0;display:grid;place-items:center;font:500 13px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute);background:repeating-linear-gradient(135deg,transparent 0 14px,rgba(241,235,231,.03) 14px 15px)}
+.clients ul.logos{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:16px}
+.clients ul.logos li{flex-direction:column;align-items:stretch;gap:12px;padding:12px}
+.logo{display:block;aspect-ratio:16/9;border-radius:4px;overflow:hidden;background:#111}
+.logo img{width:100%;height:100%;object-fit:cover;display:block}
+.logo.white{background:#fff;display:grid;place-items:center;padding:6%}
+.logo.white img{object-fit:contain}
+.clients ul.logos b{font-weight:600;font-size:14px;padding:0 4px 4px}
+
 .auto-grid{display:grid;gap:16px;grid-template-columns:minmax(0,1fr) minmax(0,2.2fr);align-items:start}
 @media (max-width:640px){ .auto-grid{grid-template-columns:1fr} .auto-grid .card:first-child{max-width:300px} }
 
@@ -203,7 +213,8 @@ a{color:inherit}
 .folder:hover .folder-body,.folder:hover .folder-tab{border-color:var(--red)}
 .folder:hover .folder-body{background:color-mix(in srgb,var(--char-2) 85%,var(--red))}
 
-.ai-side .folder{height:100%}
+.ai-side .folder,.ai-home > .folder{height:100%}
+.ai-home > .folder .folder-body{flex-direction:column;align-items:stretch;gap:20px}
 .ai-side .folder-body{flex-direction:column;align-items:stretch;gap:20px;height:calc(100% - 0px)}
 .folder-row{display:flex;align-items:center;gap:16px}
 .folder-peek{position:relative;display:block;aspect-ratio:16/7;border-radius:6px;overflow:hidden;background:#000;border:1px solid var(--line)}
@@ -319,10 +330,10 @@ a{color:inherit}
 <footer class="clients" aria-labelledby="clients-h">
   <div class="wrap">
     <span class="mono" id="clients-h">Со мной работали</span>
-    <ul>
-      <li><span class="mark" aria-hidden="true">Ч</span><div><b>Черкизово Foodservice</b><small>Продукты питания</small></div></li>
-      <li><span class="mark" aria-hidden="true">С</span><div><b>Сбер · Индустрия образования</b><small>Образование</small></div></li>
-      <li><span class="mark" aria-hidden="true">W</span><div><b>Winline</b><small>Спорт</small></div></li>
+    <ul class="logos">
+      <li><span class="logo white"><img src="clients/cherkizovo.jpg" alt="Черкизово Food Service" loading="lazy"></span><b>Черкизово Food Service</b></li>
+      <li><span class="logo"><img src="clients/sber.jpg" alt="Сбер Университет" loading="lazy"></span><b>Сбер Университет</b></li>
+      <li><span class="logo"><img src="clients/winline.jpg" alt="Winline Basket Cup" loading="lazy"></span><b>Winline Basket Cup</b></li>
     </ul>
     <div class="foot mono"><span>© Иван Крылов, 2026</span><a href="#top">Наверх ↑</a></div>
   </div>
@@ -338,10 +349,7 @@ const yt = id => ({p:"YouTube", yt:id, url:"https://youtu.be/"+id});
 const tg = (url, n) => ({p:"Telegram", url, n});
 const CFS = [{"f": "cfs-01", "t": "Куриное фрикасе с макаронами", "v": true}, {"f": "cfs-02", "t": "Куриный бульон", "v": true}, {"f": "cfs-03", "t": "Окорочок запечённый", "v": true}, {"f": "cfs-04", "t": "Пицца", "v": true}, {"f": "cfs-05", "t": "Пицца 2", "v": true}, {"f": "cfs-06", "t": "Поджарка с гречей", "v": true}, {"f": "cfs-07", "t": "Рагу с корнеплодами", "v": true}, {"f": "cfs-08", "t": "Фрикадельки в брусничном соусе", "v": true}, {"f": "cfs-09", "t": "Чахохбили", "v": true}, {"f": "cfs-10", "t": "Черкизово", "v": false}, {"f": "cfs-11", "t": "Шаверма", "v": true}];
 /* motion graphics for ZEEKR: live HTML animations; z = zoom so the badge fills its card */
-const AI_AUTO = [
-  {p:"Видео", dir:"auto", local:"auto-1", t:"Defender", v:true, url:"auto/auto-1.mp4"},
-  {p:"Видео", dir:"auto", local:"auto-2", t:"Audi Sport Quattro S1", v:false, url:"auto/auto-2.mp4"},
-];
+const AI_GEN = [];
 const MG = [
   {f:"dimensions", t:"Dimensions", z:1.28},
   {f:"interior", t:"Interior", z:1.55},
@@ -374,9 +382,9 @@ const CATS = [
   {id:"podcast", name:"Подкаст", note:"Многокамерная запись и монтаж подкаста.", shape:"wide",
    items:[yt("QXucdwinLlM")]},
   {id:"reels", name:"Reels", note:"Вертикальные ролики для соцсетей.", shape:"tall",
-   items:[tg("https://t.me/krylovivn_media/25/267","267"), tg("https://t.me/krylovivn_media/25/212","212"), tg("https://t.me/krylovivn_media/25/207","207"), tg("https://t.me/krylovivn_media/25/206","206")]},
-  {id:"auto", name:"Автомобили", note:"Автомобильные съёмки и обзоры.", shape:"auto",
-   items:[yt("ao9F8nWbsug"), yt("wrKsg-Lw7eQ")]},
+   items:[]},
+  {id:"auto", name:"Автомобили", note:"Автомобильные съёмки.", shape:"single",
+   items:[{p:"Видео", dir:".", local:"bg", t:"Lancer VI TME и Pajero", v:false, url:"bg.mp4"}]},
 ];
 const ru = n => n%10===1&&n%100!==11 ? "работа" : (n%10>=2&&n%10<=4&&(n%100<10||n%100>=20) ? "работы" : "работ");
 
@@ -409,7 +417,7 @@ const main = document.getElementById("work"), nav = document.getElementById("nav
 CATS.forEach(c => {
   const s = document.createElement("section");
   s.className = "cat"; s.id = c.id; s.setAttribute("aria-labelledby", c.id+"-h");
-  s.innerHTML = `<div class="wrap"><div class="cat-head"><div><h2 id="${c.id}-h">${c.name}</h2><p>${c.note}</p></div>${(n => `<span class="mono">${n} ${ru(n)}</span>`)((c.items||c.brands.flatMap(b=>b.items)).length + (c.shape==="ai" ? MG.length + AI_AUTO.length : 0))}</div><div class="body"></div></div>`;
+  s.innerHTML = `<div class="wrap"><div class="cat-head"><div><h2 id="${c.id}-h">${c.name}</h2><p>${c.note}</p></div>${(n => `<span class="mono">${n} ${ru(n)}</span>`)((c.items||c.brands.flatMap(b=>b.items)).length + (c.shape==="ai" ? MG.length + AI_GEN.length : 0))}</div><div class="body"></div></div>`;
   const body = s.querySelector(".body");
   if (c.shape === "auto"){
     body.className = "auto-split";
@@ -432,44 +440,48 @@ CATS.forEach(c => {
       }
       return a;
     };
+    const folder = (href, peek, name, sub) => `<a class="folder" href="${href}">
+        <span class="folder-tab" aria-hidden="true"></span>
+        <span class="folder-body">
+          <span class="folder-peek" aria-hidden="true">${peek}</span>
+          <span class="folder-row">
+            <span class="folder-txt"><span class="folder-name">${name}</span><span class="mono">${sub}</span></span>
+            <span class="folder-go">Открыть папку →</span>
+          </span>
+        </span>
+      </a>`;
+    const view = (id, back, backLabel, title, count) => {
+      const v = document.createElement("div"); v.className = "brand-block"; v.id = id; v.hidden = true;
+      v.innerHTML = `<a class="back" href="${back}">← ${backLabel}</a><div class="brand-head"><h3>${title}</h3><span class="mono">${count}</span></div>`;
+      return v;
+    };
+    const zmPeek = `<img class="peek-img" src="zeekr/thumb/folder.jpg" alt="">`;
+    const genPeek = AI_GEN.length ? `<img class="peek-img" src="${AI_GEN[0].dir}/${AI_GEN[0].local}.jpg" alt="">` : `<span class="peek-empty">Скоро</span>`;
+    // level 1: Нейросети
     const home = document.createElement("div"); home.className = "ai-home";
-    const side = document.createElement("div"); side.className = "ai-side";
-    side.insertAdjacentHTML("beforeend", `<a class="folder" href="#motion-graphics">
-        <span class="folder-tab" aria-hidden="true"></span>
-        <span class="folder-body">
-          <span class="folder-peek" aria-hidden="true"><img class="peek-img" src="zeekr/thumb/folder.jpg" alt=""></span>
-          <span class="folder-row">
-            <span class="folder-txt"><span class="folder-name">Моушн-графика <em>ZMZEEKR</em></span><span class="mono">Плашки и иконки · ${MG.length} ${ru(MG.length)}</span></span>
-            <span class="folder-go">Открыть папку →</span>
-          </span>
-        </span>
-      </a>`);
-    const autoSide = document.createElement("div"); autoSide.className = "ai-side";
-    autoSide.insertAdjacentHTML("beforeend", `<a class="folder" href="#ai-auto">
-        <span class="folder-tab" aria-hidden="true"></span>
-        <span class="folder-body">
-          <span class="folder-peek" aria-hidden="true"><img class="peek-img" src="auto/auto-2.jpg" alt=""></span>
-          <span class="folder-row">
-            <span class="folder-txt"><span class="folder-name">Авто</span><span class="mono">${AI_AUTO.length ? AI_AUTO.length + " " + ru(AI_AUTO.length) : "Скоро"}</span></span>
-            <span class="folder-go">Открыть папку →</span>
-          </span>
-        </span>
-      </a>`);
-    home.append(side, autoSide);
-    const view = document.createElement("div"); view.className = "brand-block"; view.id = "motion-graphics"; view.hidden = true;
-    view.innerHTML = `<a class="back" href="#ai">← Нейросети</a><div class="brand-head"><h3>Моушн-графика <em>ZMZEEKR</em></h3><span class="mono">${MG.length} ${ru(MG.length)}</span></div>`;
+    home.innerHTML = folder("#ai-gen", genPeek, "Генерация фото/видео", AI_GEN.length ? AI_GEN.length + " " + ru(AI_GEN.length) : "Скоро")
+                   + folder("#motion-design", zmPeek, "Motion-Design", "1 папка · " + MG.length + " " + ru(MG.length));
+    // level 2: Motion-Design
+    const md = view("motion-design", "#ai", "Нейросети", "Motion-Design", "1 папка");
+    const mdGrid = document.createElement("div"); mdGrid.className = "ai-home";
+    mdGrid.innerHTML = folder("#motion-graphics", zmPeek, "Автомобильный сервис <em>ZMZEEKR</em>", "Плашки и иконки · " + MG.length + " " + ru(MG.length));
+    md.appendChild(mdGrid);
+    // level 3: Автомобильный сервис ZMZEEKR
+    const zm = view("motion-graphics", "#motion-design", "Motion-Design", "Автомобильный сервис <em>ZMZEEKR</em>", MG.length + " " + ru(MG.length));
     const allg = document.createElement("div"); allg.className = "mg-all";
     MG.forEach(m => allg.appendChild(mgCard(m)));
-    view.appendChild(allg);
-    const autoView = document.createElement("div"); autoView.className = "brand-block"; autoView.id = "ai-auto"; autoView.hidden = true;
-    autoView.innerHTML = `<a class="back" href="#ai">← Нейросети</a><div class="brand-head"><h3>Авто</h3><span class="mono">${AI_AUTO.length} ${ru(AI_AUTO.length)}</span></div>`;
-    if (AI_AUTO.length){ const g = document.createElement("div"); g.className = "auto-grid"; AI_AUTO.forEach((it,i) => g.appendChild(card(it,i, it.v ? "r916" : "r169"))); autoView.appendChild(g); }
-    else autoView.insertAdjacentHTML("beforeend", `<p class="empty">Работы скоро появятся.</p>`);
-    body.append(home, view, autoView);
+    zm.appendChild(allg);
+    // Генерация фото/видео
+    const gen = view("ai-gen", "#ai", "Нейросети", "Генерация фото/видео", AI_GEN.length + " " + ru(AI_GEN.length));
+    if (AI_GEN.length){ const g = document.createElement("div"); g.className = "auto-grid"; AI_GEN.forEach((it,i) => g.appendChild(card(it,i, it.v ? "r916" : "r169"))); gen.appendChild(g); }
+    else gen.insertAdjacentHTML("beforeend", `<p class="empty">Работы скоро появятся.</p>`);
+    body.append(home, md, zm, gen);
+    const views = {"#motion-design": md, "#motion-graphics": zm, "#ai-gen": gen};
     const route = () => {
-      const h = location.hash, open = h === "#motion-graphics", openAuto = h === "#ai-auto";
-      home.hidden = open || openAuto; view.hidden = !open; autoView.hidden = !openAuto;
-      if (open || openAuto || location.hash === "#ai") requestAnimationFrame(() => s.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}));
+      const open = views[location.hash];
+      home.hidden = !!open;
+      Object.values(views).forEach(v => v.hidden = v !== open);
+      if (open || location.hash === "#ai") requestAnimationFrame(() => s.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}));
       lazyFrames();
     };
     window.addEventListener("hashchange", route);
@@ -500,6 +512,11 @@ CATS.forEach(c => {
     const bottom = document.createElement("div"); bottom.className = "grid g-tall"; bottom.style.marginTop = "16px";
     c.items.forEach((it,i) => (it.yt ? top : bottom).appendChild(card(it,i, it.yt ? "r169" : "r45")));
     body.append(top, bottom);
+  } else if (c.shape === "single"){
+    body.className = "single";
+    c.items.forEach((it,i) => body.appendChild(card(it,i,"r169")));
+  } else if (!c.items.length){
+    body.innerHTML = `<p class="empty">Работы скоро появятся.</p>`;
   } else {
     body.className = "grid " + (c.shape==="tall" ? "g-tall" : "g-wide");
     c.items.forEach((it,i) => body.appendChild(card(it,i, c.shape==="tall" ? "r916" : "r169")));
