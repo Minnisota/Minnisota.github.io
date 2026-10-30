@@ -157,6 +157,16 @@ a{color:inherit}
 .brand-head h3{font-family:var(--f-display);font-weight:600;font-size:clamp(20px,2.6vw,28px);margin:0}
 .brand-head h3 em{font-style:normal;color:var(--red)}
 .brand-wide{margin-bottom:16px}
+.ai-home{grid-template-columns:repeat(2,minmax(0,1fr))}
+.peek-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85;transition:transform .5s}
+.folder:hover .peek-img{transform:scale(1.04)}
+.empty{margin:8px 0 0;color:var(--mute)}
+.btile-bg.full img{opacity:1;filter:none;height:68%;object-position:center 50%}
+.btile-bg.full{background:var(--char)}
+.btile-bg.full::after{background:linear-gradient(180deg,transparent 50%,var(--char) 70%)}
+.btile:hover .btile-bg.full img{opacity:1}
+@media (max-width:820px){ .ai-home{grid-template-columns:1fr} }
+
 .r11{aspect-ratio:1/1}
 .mg-sub{margin:26px 0 12px}
 .brand-head + .mg-sub{margin-top:4px}
@@ -173,7 +183,7 @@ a{color:inherit}
 .lb-box.sq{aspect-ratio:1/1;width:auto;height:min(80vh,100%);max-width:100%}
 .lb-box.sq video{width:100%;height:100%;object-fit:contain}
 
-.ai-home{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.6fr);gap:16px;align-items:start}
+.ai-home{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
 .ai-side{display:grid;gap:16px}
 .mg-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .mg-frame{background:#000}
@@ -320,6 +330,7 @@ const yt = id => ({p:"YouTube", yt:id, url:"https://youtu.be/"+id});
 const tg = (url, n) => ({p:"Telegram", url, n});
 const CFS = [{"f": "cfs-01", "t": "Куриное фрикасе с макаронами", "v": true}, {"f": "cfs-02", "t": "Куриный бульон", "v": true}, {"f": "cfs-03", "t": "Окорочок запечённый", "v": true}, {"f": "cfs-04", "t": "Пицца", "v": true}, {"f": "cfs-05", "t": "Пицца 2", "v": true}, {"f": "cfs-06", "t": "Поджарка с гречей", "v": true}, {"f": "cfs-07", "t": "Рагу с корнеплодами", "v": true}, {"f": "cfs-08", "t": "Фрикадельки в брусничном соусе", "v": true}, {"f": "cfs-09", "t": "Чахохбили", "v": true}, {"f": "cfs-10", "t": "Черкизово", "v": false}, {"f": "cfs-11", "t": "Шаверма", "v": true}];
 /* motion graphics for ZEEKR: live HTML animations; z = zoom so the badge fills its card */
+const AI_AUTO = [];
 const MG = [
   {f:"dimensions", t:"Dimensions", z:1.28},
   {f:"interior", t:"Interior", z:1.55},
@@ -341,11 +352,11 @@ const MG = [
 ];
 const CATS = [
   {id:"ai", name:"Нейросети", note:"Ролики и моушн-графика, собранные с помощью нейросетей.", shape:"ai",
-   items:[{p:"Instagram", url:"https://www.instagram.com/reel/DTuvyC5jMnw/", n:"Reels"}]},
+   items:[]},
   {id:"ads", name:"Реклама", note:"Рекламные ролики для брендов.", shape:"brands",
    brands:[
      {id:"cherkizovo", logo:"cfs/logo.png", name:"Черкизово", em:"Food Service", items:CFS.map(v => ({p:"Видео", local:v.f, t:v.t, v:v.v, url:"cfs/"+v.f+".mp4"}))},
-     {id:"other", name:"Другие", em:"проекты", items:[yt("ymegfolLM6g"), tg("https://t.me/krylovivn_media/6/59","59"), tg("https://t.me/krylovivn_media/6/101","101"), tg("https://t.me/krylovivn_media/6/109","109"), tg("https://t.me/krylovivn_media/6/150","150")]},
+     {id:"sber", cover:"sber/cover.jpg", name:"Сбер", em:"Обучение", items:[]},
    ]},
   {id:"youtube", name:"YouTube", note:"Съёмка и монтаж роликов для YouTube.", shape:"wide",
    items:[yt("ExyTx9QbQtY"), yt("g-KaVCnvbvY"), yt("6Ac7YRoX-0o")]},
@@ -411,8 +422,6 @@ CATS.forEach(c => {
       return a;
     };
     const home = document.createElement("div"); home.className = "ai-home";
-    const reel = document.createElement("div"); reel.className = "ai-reel";
-    c.items.forEach((it,i) => reel.appendChild(card(it,i,"r916")));
     const side = document.createElement("div"); side.className = "ai-side";
     side.insertAdjacentHTML("beforeend", `<a class="folder" href="#motion-graphics">
         <span class="folder-tab" aria-hidden="true"></span>
@@ -427,7 +436,18 @@ CATS.forEach(c => {
           </span>
         </span>
       </a>`);
-    home.append(reel, side);
+    const autoSide = document.createElement("div"); autoSide.className = "ai-side";
+    autoSide.insertAdjacentHTML("beforeend", `<a class="folder" href="#ai-auto">
+        <span class="folder-tab" aria-hidden="true"></span>
+        <span class="folder-body">
+          <span class="folder-peek" aria-hidden="true"><img class="peek-img" src="bg-poster.jpg" alt=""></span>
+          <span class="folder-row">
+            <span class="folder-txt"><span class="folder-name">Авто</span><span class="mono">${AI_AUTO.length ? AI_AUTO.length + " " + ru(AI_AUTO.length) : "Скоро"}</span></span>
+            <span class="folder-go">Открыть папку →</span>
+          </span>
+        </span>
+      </a>`);
+    home.append(side, autoSide);
     const view = document.createElement("div"); view.className = "brand-block"; view.id = "motion-graphics"; view.hidden = true;
     view.innerHTML = `<a class="back" href="#ai">← Нейросети</a><div class="brand-head"><h3>Моушн-графика <em>ZMZEEKR</em></h3><span class="mono">${MG.length} ${ru(MG.length)}</span></div>`;
     [["Плашки", MG.filter(m => !m.icon), "mg-badges"], ["Иконки", MG.filter(m => m.icon), "mg-icons"]].forEach(([label, list, cls]) => {
@@ -436,11 +456,15 @@ CATS.forEach(c => {
       list.forEach(m => g.appendChild(mgCard(m)));
       view.appendChild(g);
     });
-    body.append(home, view);
+    const autoView = document.createElement("div"); autoView.className = "brand-block"; autoView.id = "ai-auto"; autoView.hidden = true;
+    autoView.innerHTML = `<a class="back" href="#ai">← Нейросети</a><div class="brand-head"><h3>Авто</h3><span class="mono">${AI_AUTO.length} ${ru(AI_AUTO.length)}</span></div>`;
+    if (AI_AUTO.length){ const g = document.createElement("div"); g.className = "grid g-wide"; AI_AUTO.forEach((it,i) => g.appendChild(card(it,i,"r169"))); autoView.appendChild(g); }
+    else autoView.insertAdjacentHTML("beforeend", `<p class="empty">Работы скоро появятся.</p>`);
+    body.append(home, view, autoView);
     const route = () => {
-      const open = location.hash === "#motion-graphics";
-      home.hidden = open; view.hidden = !open;
-      if (open || location.hash === "#ai") requestAnimationFrame(() => s.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}));
+      const h = location.hash, open = h === "#motion-graphics", openAuto = h === "#ai-auto";
+      home.hidden = open || openAuto; view.hidden = !open; autoView.hidden = !openAuto;
+      if (open || openAuto || location.hash === "#ai") requestAnimationFrame(() => s.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}));
       lazyFrames();
     };
     window.addEventListener("hashchange", route);
@@ -453,9 +477,9 @@ CATS.forEach(c => {
       const n = b.items.length;
       const cover = b.items.find(it => it.local) ;
       tiles.insertAdjacentHTML("beforeend", `<a class="btile" href="#brand-${b.id}">
-          <span class="btile-bg">${cover ? `<img src="cfs/${cover.local}.jpg" alt="" loading="lazy">` : ""}</span>
-          <span class="btile-logo${b.logo ? " img" : ""}">${b.logo ? `<img src="${b.logo}" alt="${b.name} ${b.em}">` : `<b>${b.name[0]}</b>`}</span>
-          <span class="btile-txt"><span class="btile-name">${b.name} <em>${b.em}</em></span><span class="mono">${n} ${ru(n)} · Открыть →</span></span>
+          <span class="btile-bg${b.cover ? " full" : ""}">${b.cover ? `<img src="${b.cover}" alt="${b.name} ${b.em}" loading="lazy">` : cover ? `<img src="cfs/${cover.local}.jpg" alt="" loading="lazy">` : ""}</span>
+          ${b.cover ? "" : `<span class="btile-logo${b.logo ? " img" : ""}">${b.logo ? `<img src="${b.logo}" alt="${b.name} ${b.em}">` : `<b>${b.name[0]}</b>`}</span>`}
+          <span class="btile-txt"><span class="btile-name">${b.name} <em>${b.em}</em></span><span class="mono">${n ? n + " " + ru(n) : "Скоро"} · Открыть →</span></span>
         </a>`);
       const blk = document.createElement("div"); blk.className = "brand-block"; blk.id = "brand-" + b.id; blk.hidden = true;
       const verts = b.items.filter(it => it.local && it.v), rest = b.items.filter(it => !(it.local && it.v));
@@ -479,6 +503,7 @@ CATS.forEach(c => {
           blk.append(g);
         }
       }
+      if (!b.items.length) blk.insertAdjacentHTML("beforeend", `<p class="empty">Работы скоро появятся.</p>`);
       body.appendChild(blk);
     });
     const route = () => {
