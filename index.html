@@ -282,6 +282,17 @@ a{color:inherit}
   *,*::before{animation:none!important;transition:none!important}
   html{scroll-behavior:auto}
 }
+
+.r32{aspect-ratio:3/2}
+.lb-box.img{aspect-ratio:3/2;background:transparent}
+.lb-box.img img{width:100%;height:100%;object-fit:contain;display:block}
+.clients ul.logos{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));justify-items:center}
+.clients ul.logos li{background:none;border:0;padding:0;align-items:center;text-align:center}
+.logo{width:clamp(110px,14vw,150px);aspect-ratio:1/1;border-radius:50%;border:1px solid var(--line)}
+.logo.white{padding:10%}
+.clients ul.logos b{padding:0}
+.logo.sber{background:#cdeedb}
+.logo.sber img{transform:scale(.8);border-radius:50%}
 </style>
 </head>
 <body>
@@ -332,7 +343,7 @@ a{color:inherit}
     <span class="mono" id="clients-h">Со мной работали</span>
     <ul class="logos">
       <li><span class="logo white"><img src="clients/cherkizovo.jpg" alt="Черкизово Food Service" loading="lazy"></span><b>Черкизово Food Service</b></li>
-      <li><span class="logo"><img src="clients/sber.jpg" alt="Сбер Университет" loading="lazy"></span><b>Сбер Университет</b></li>
+      <li><span class="logo sber"><img src="clients/sber.jpg" alt="Сбер Университет" loading="lazy"></span><b>Сбер Университет</b></li>
       <li><span class="logo"><img src="clients/winline.jpg" alt="Winline Basket Cup" loading="lazy"></span><b>Winline Basket Cup</b></li>
     </ul>
     <div class="foot mono"><span>© Иван Крылов, 2026</span><a href="#top">Наверх ↑</a></div>
@@ -349,7 +360,10 @@ const yt = id => ({p:"YouTube", yt:id, url:"https://youtu.be/"+id});
 const tg = (url, n) => ({p:"Telegram", url, n});
 const CFS = [{"f": "cfs-01", "t": "Куриное фрикасе с макаронами", "v": true}, {"f": "cfs-02", "t": "Куриный бульон", "v": true}, {"f": "cfs-03", "t": "Окорочок запечённый", "v": true}, {"f": "cfs-04", "t": "Пицца", "v": true}, {"f": "cfs-05", "t": "Пицца 2", "v": true}, {"f": "cfs-06", "t": "Поджарка с гречей", "v": true}, {"f": "cfs-07", "t": "Рагу с корнеплодами", "v": true}, {"f": "cfs-08", "t": "Фрикадельки в брусничном соусе", "v": true}, {"f": "cfs-09", "t": "Чахохбили", "v": true}, {"f": "cfs-10", "t": "Черкизово", "v": false}, {"f": "cfs-11", "t": "Шаверма", "v": true}];
 /* motion graphics for ZEEKR: live HTML animations; z = zoom so the badge fills its card */
-const AI_GEN = [];
+const AI_GEN = [
+  {img:"gen/stratos-snow", t:"Lancia Stratos · снежное ралли"},
+  {img:"gen/miura-fog", t:"Lamborghini Miura · туманная ферма"},
+];
 const MG = [
   {f:"dimensions", t:"Dimensions", z:1.28},
   {f:"interior", t:"Interior", z:1.55},
@@ -456,7 +470,7 @@ CATS.forEach(c => {
       return v;
     };
     const zmPeek = `<img class="peek-img" src="zeekr/thumb/folder.jpg" alt="">`;
-    const genPeek = AI_GEN.length ? `<img class="peek-img" src="${AI_GEN[0].dir}/${AI_GEN[0].local}.jpg" alt="">` : `<span class="peek-empty">Скоро</span>`;
+    const genPeek = AI_GEN.length ? `<img class="peek-img" src="${AI_GEN[0].img}-thumb.jpg" alt="">` : `<span class="peek-empty">Скоро</span>`;
     // level 1: Нейросети
     const home = document.createElement("div"); home.className = "ai-home";
     home.innerHTML = folder("#ai-gen", genPeek, "Генерация фото/видео", AI_GEN.length ? AI_GEN.length + " " + ru(AI_GEN.length) : "Скоро")
@@ -473,7 +487,16 @@ CATS.forEach(c => {
     zm.appendChild(allg);
     // Генерация фото/видео
     const gen = view("ai-gen", "#ai", "Нейросети", "Генерация фото/видео", AI_GEN.length + " " + ru(AI_GEN.length));
-    if (AI_GEN.length){ const g = document.createElement("div"); g.className = "auto-grid"; AI_GEN.forEach((it,i) => g.appendChild(card(it,i, it.v ? "r916" : "r169"))); gen.appendChild(g); }
+    if (AI_GEN.length){
+      const g = document.createElement("div"); g.className = "grid g-wide";
+      AI_GEN.forEach(it => {
+        const a = document.createElement("a"); a.className = "card"; a.href = it.img + ".jpg"; a.target = "_blank"; a.rel = "noopener";
+        a.innerHTML = `<div class="thumb r32"><img src="${it.img}-thumb.jpg" alt="${it.t}" loading="lazy"><span class="plat">Фото</span></div><div class="meta"><span class="ttl">${it.t}</span><span>Открыть</span></div>`;
+        a.addEventListener("click", e => { e.preventDefault(); openImage(it.img + ".jpg", it.t); });
+        g.appendChild(a);
+      });
+      gen.appendChild(g);
+    }
     else gen.insertAdjacentHTML("beforeend", `<p class="empty">Работы скоро появятся.</p>`);
     body.append(home, md, zm, gen);
     const views = {"#motion-design": md, "#motion-graphics": zm, "#ai-gen": gen};
@@ -558,7 +581,7 @@ nav.insertAdjacentHTML("beforeend", `<li><a href="#contact">Контакты</a>
 
 /* lightbox */
 const lb = document.getElementById("lb"), lbBox = document.getElementById("lbBox");
-function openLB(id){ lbBox.classList.remove("tall","sq"); lbBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen title="Видео"></iframe>`; lb.hidden = false; document.getElementById("lbClose").focus(); }
+function openLB(id){ lbBox.classList.remove("tall","sq","img"); lbBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen title="Видео"></iframe>`; lb.hidden = false; document.getElementById("lbClose").focus(); }
 
 /* carousel: slides keep moving from right to left; pauses while hovered, touched or a video preview plays */
 function carousel(tr, btns){
@@ -612,6 +635,11 @@ function lazyFrames(){
   document.querySelectorAll("iframe[data-src]:not([src])").forEach(f => frameIO ? frameIO.observe(f) : (f.src = f.dataset.src));
   document.querySelectorAll("video.mg-vid:not([data-obs])").forEach(v => { v.dataset.obs = 1; if (vidIO) vidIO.observe(v); else { v.src = v.dataset.src; v.autoplay = true; } });
 }
+function openImage(src, alt){
+  lbBox.classList.remove("tall","sq","img"); lbBox.classList.add("img");
+  lbBox.innerHTML = `<img src="${src}" alt="${alt}">`;
+  lb.hidden = false; document.getElementById("lbClose").focus();
+}
 function openSquare(src){
   lbBox.classList.remove("tall"); lbBox.classList.add("sq");
   lbBox.innerHTML = `<video src="${src}" autoplay loop muted playsinline></video>`;
@@ -623,12 +651,12 @@ function openSquareFrame(src){
   lb.hidden = false; document.getElementById("lbClose").focus();
 }
 function openFrame(src){
-  lbBox.classList.remove("tall","sq");
+  lbBox.classList.remove("tall","sq","img");
   lbBox.innerHTML = `<iframe src="${src}" title="Моушн-графика"></iframe>`;
   lb.hidden = false; document.getElementById("lbClose").focus();
 }
 lazyFrames();
-function closeLB(){ lb.hidden = true; lbBox.innerHTML = ""; lbBox.classList.remove("tall","sq"); const bg = document.getElementById("bgVideo"); if (bg) bg.play().catch(()=>{}); }
+function closeLB(){ lb.hidden = true; lbBox.innerHTML = ""; lbBox.classList.remove("tall","sq","img"); const bg = document.getElementById("bgVideo"); if (bg) bg.play().catch(()=>{}); }
 document.getElementById("lbClose").onclick = closeLB;
 lb.addEventListener("click", e => { if (e.target === lb) closeLB(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !lb.hidden) closeLB(); });
