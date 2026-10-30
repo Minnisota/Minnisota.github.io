@@ -157,6 +157,9 @@ a{color:inherit}
 .brand-head h3{font-family:var(--f-display);font-weight:600;font-size:clamp(20px,2.6vw,28px);margin:0}
 .brand-head h3 em{font-style:normal;color:var(--red)}
 .brand-wide{margin-bottom:16px}
+.auto-grid{display:grid;gap:16px;grid-template-columns:minmax(0,1fr) minmax(0,2.2fr);align-items:start}
+@media (max-width:640px){ .auto-grid{grid-template-columns:1fr} .auto-grid .card:first-child{max-width:300px} }
+
 .mg-all{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr))}
 .mg-all .meta{padding:9px 12px;font-size:13px}
 .mg-frame video.contain{object-fit:contain;transform:scale(1.15)}
@@ -335,7 +338,10 @@ const yt = id => ({p:"YouTube", yt:id, url:"https://youtu.be/"+id});
 const tg = (url, n) => ({p:"Telegram", url, n});
 const CFS = [{"f": "cfs-01", "t": "Куриное фрикасе с макаронами", "v": true}, {"f": "cfs-02", "t": "Куриный бульон", "v": true}, {"f": "cfs-03", "t": "Окорочок запечённый", "v": true}, {"f": "cfs-04", "t": "Пицца", "v": true}, {"f": "cfs-05", "t": "Пицца 2", "v": true}, {"f": "cfs-06", "t": "Поджарка с гречей", "v": true}, {"f": "cfs-07", "t": "Рагу с корнеплодами", "v": true}, {"f": "cfs-08", "t": "Фрикадельки в брусничном соусе", "v": true}, {"f": "cfs-09", "t": "Чахохбили", "v": true}, {"f": "cfs-10", "t": "Черкизово", "v": false}, {"f": "cfs-11", "t": "Шаверма", "v": true}];
 /* motion graphics for ZEEKR: live HTML animations; z = zoom so the badge fills its card */
-const AI_AUTO = [];
+const AI_AUTO = [
+  {p:"Видео", dir:"auto", local:"auto-1", t:"Defender", v:true, url:"auto/auto-1.mp4"},
+  {p:"Видео", dir:"auto", local:"auto-2", t:"Audi Sport Quattro S1", v:false, url:"auto/auto-2.mp4"},
+];
 const MG = [
   {f:"dimensions", t:"Dimensions", z:1.28},
   {f:"interior", t:"Interior", z:1.55},
@@ -358,7 +364,7 @@ const MG = [
 const CATS = [
   {id:"ai", name:"Нейросети", note:"Ролики и моушн-графика, собранные с помощью нейросетей.", shape:"ai",
    items:[]},
-  {id:"ads", name:"Реклама", note:"Рекламные ролики для брендов.", shape:"brands",
+  {id:"ads", name:"Реклама", note:"Рекламные ролики для «Черкизово», «Сбер Обучение» и не только.", shape:"brands",
    brands:[
      {id:"cherkizovo", logo:"cfs/logo.png", name:"Черкизово", em:"Food Service", items:CFS.map(v => ({p:"Видео", local:v.f, t:v.t, v:v.v, url:"cfs/"+v.f+".mp4"}))},
      {id:"sber", cover:"sber/cover.jpg", name:"Сбер", em:"Обучение", items:[]},
@@ -386,7 +392,7 @@ function card(it, i, ratio){
     </div>
     <div class="meta"><span>${label}</span><span>${it.p}</span></div>`;
   if (it.local){
-    a.querySelector(".thumb").insertAdjacentHTML("afterbegin", `<img src="cfs/${it.local}.jpg" alt="" loading="lazy"><video muted loop playsinline preload="none" src="cfs/${it.local}.mp4"></video>`);
+    a.querySelector(".thumb").insertAdjacentHTML("afterbegin", `<img src="${it.dir||"cfs"}/${it.local}.jpg" alt="" loading="lazy"><video muted loop playsinline preload="none" src="${it.dir||"cfs"}/${it.local}.mp4"></video>`);
     a.querySelector(".plat").textContent = it.v ? "Вертикальное" : "Видео";
     a.querySelector(".meta").innerHTML = `<span class="ttl">${it.t}</span><span>Смотреть</span>`;
     a.querySelector(".num").remove();
@@ -403,7 +409,7 @@ const main = document.getElementById("work"), nav = document.getElementById("nav
 CATS.forEach(c => {
   const s = document.createElement("section");
   s.className = "cat"; s.id = c.id; s.setAttribute("aria-labelledby", c.id+"-h");
-  s.innerHTML = `<div class="wrap"><div class="cat-head"><div><h2 id="${c.id}-h">${c.name}</h2><p>${c.note}</p></div>${(n => `<span class="mono">${n} ${ru(n)}</span>`)((c.items||c.brands.flatMap(b=>b.items)).length + (c.shape==="ai" ? MG.length : 0))}</div><div class="body"></div></div>`;
+  s.innerHTML = `<div class="wrap"><div class="cat-head"><div><h2 id="${c.id}-h">${c.name}</h2><p>${c.note}</p></div>${(n => `<span class="mono">${n} ${ru(n)}</span>`)((c.items||c.brands.flatMap(b=>b.items)).length + (c.shape==="ai" ? MG.length + AI_AUTO.length : 0))}</div><div class="body"></div></div>`;
   const body = s.querySelector(".body");
   if (c.shape === "auto"){
     body.className = "auto-split";
@@ -442,7 +448,7 @@ CATS.forEach(c => {
     autoSide.insertAdjacentHTML("beforeend", `<a class="folder" href="#ai-auto">
         <span class="folder-tab" aria-hidden="true"></span>
         <span class="folder-body">
-          <span class="folder-peek" aria-hidden="true"><img class="peek-img" src="bg-poster.jpg" alt=""></span>
+          <span class="folder-peek" aria-hidden="true"><img class="peek-img" src="auto/auto-2.jpg" alt=""></span>
           <span class="folder-row">
             <span class="folder-txt"><span class="folder-name">Авто</span><span class="mono">${AI_AUTO.length ? AI_AUTO.length + " " + ru(AI_AUTO.length) : "Скоро"}</span></span>
             <span class="folder-go">Открыть папку →</span>
@@ -457,7 +463,7 @@ CATS.forEach(c => {
     view.appendChild(allg);
     const autoView = document.createElement("div"); autoView.className = "brand-block"; autoView.id = "ai-auto"; autoView.hidden = true;
     autoView.innerHTML = `<a class="back" href="#ai">← Нейросети</a><div class="brand-head"><h3>Авто</h3><span class="mono">${AI_AUTO.length} ${ru(AI_AUTO.length)}</span></div>`;
-    if (AI_AUTO.length){ const g = document.createElement("div"); g.className = "grid g-wide"; AI_AUTO.forEach((it,i) => g.appendChild(card(it,i,"r169"))); autoView.appendChild(g); }
+    if (AI_AUTO.length){ const g = document.createElement("div"); g.className = "auto-grid"; AI_AUTO.forEach((it,i) => g.appendChild(card(it,i, it.v ? "r916" : "r169"))); autoView.appendChild(g); }
     else autoView.insertAdjacentHTML("beforeend", `<p class="empty">Работы скоро появятся.</p>`);
     body.append(home, view, autoView);
     const route = () => {
@@ -469,20 +475,12 @@ CATS.forEach(c => {
     window.addEventListener("hashchange", route);
     setTimeout(route, 0);
   } else if (c.shape === "brands"){
-    /* brand tiles first; a tile opens that brand's videos (#brand-<id>), "Все бренды" goes back */
-    const tiles = document.createElement("div"); tiles.className = "brand-tiles";
-    body.appendChild(tiles);
-    c.brands.forEach(b => {
+    /* each brand is shown in place: heading + its videos (no folders) */
+    c.brands.filter(b => b.items.length).forEach(b => {
       const n = b.items.length;
-      const cover = b.items.find(it => it.local) ;
-      tiles.insertAdjacentHTML("beforeend", `<a class="btile" href="#brand-${b.id}">
-          <span class="btile-bg${b.cover ? " full" : ""}">${b.cover ? `<img src="${b.cover}" alt="${b.name} ${b.em}" loading="lazy">` : cover ? `<img src="cfs/${cover.local}.jpg" alt="" loading="lazy">` : ""}</span>
-          ${b.cover ? "" : `<span class="btile-logo${b.logo ? " img" : ""}">${b.logo ? `<img src="${b.logo}" alt="${b.name} ${b.em}">` : `<b>${b.name[0]}</b>`}</span>`}
-          <span class="btile-txt"><span class="btile-name">${b.name} <em>${b.em}</em></span><span class="mono">${n ? n + " " + ru(n) : "Скоро"} · Открыть →</span></span>
-        </a>`);
-      const blk = document.createElement("div"); blk.className = "brand-block"; blk.id = "brand-" + b.id; blk.hidden = true;
+      const blk = document.createElement("div"); blk.className = "brand-block"; blk.id = "brand-" + b.id;
       const verts = b.items.filter(it => it.local && it.v), rest = b.items.filter(it => !(it.local && it.v));
-      blk.innerHTML = `<a class="back" href="#ads">← Все бренды</a><div class="brand-head"><h3>${b.name} <em>${b.em}</em></h3>${verts.length > 2 ? `<div class="car-btns"><button type="button" aria-label="Назад">←</button><button type="button" aria-label="Вперёд">→</button></div>` : `<span class="mono">${n} ${ru(n)}</span>`}</div>`;
+      blk.innerHTML = `<div class="brand-head"><h3>${b.name} <em>${b.em}</em></h3>${verts.length > 2 ? `<div class="car-btns"><button type="button" aria-label="Назад">←</button><button type="button" aria-label="Вперёд">→</button></div>` : `<span class="mono">${n} ${ru(n)}</span>`}</div>`;
       if (verts.length){
         const car = document.createElement("div"); car.className = "car";
         const tr = document.createElement("div"); tr.className = "car-track";
@@ -491,28 +489,12 @@ CATS.forEach(c => {
         carousel(tr, blk.querySelectorAll(".car-btns button"));
       }
       if (rest.length){
-        if (rest.every(it => !it.local)){
-          const top = document.createElement("div"); top.className = "grid g-wide brand-wide";
-          const bottom = document.createElement("div"); bottom.className = "grid g-tall";
-          rest.forEach((it,i) => (it.yt ? top : bottom).appendChild(card(it,i, it.yt ? "r169" : "r45")));
-          blk.append(top, bottom);
-        } else {
-          const g = document.createElement("div"); g.className = "grid g-wide brand-wide after" + (rest.length === 1 ? " one" : "");
-          rest.forEach((it,i) => g.appendChild(card(it,i,"r169")));
-          blk.append(g);
-        }
+        const g = document.createElement("div"); g.className = "grid g-wide brand-wide after" + (rest.length === 1 ? " one" : "");
+        rest.forEach((it,i) => g.appendChild(card(it,i, it.yt ? "r169" : "r169")));
+        blk.append(g);
       }
-      if (!b.items.length) blk.insertAdjacentHTML("beforeend", `<p class="empty">Работы скоро появятся.</p>`);
       body.appendChild(blk);
     });
-    const route = () => {
-      const h = location.hash.slice(1), open = h.startsWith("brand-") && document.getElementById(h);
-      tiles.hidden = !!open;
-      body.querySelectorAll(".brand-block").forEach(b => b.hidden = b !== open);
-      if (open || h === "ads") requestAnimationFrame(() => s.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}));
-    };
-    window.addEventListener("hashchange", route);
-    setTimeout(route, 0);
   } else if (c.shape === "mix"){
     const top = document.createElement("div"); top.className = "grid g-wide";
     const bottom = document.createElement("div"); bottom.className = "grid g-tall"; bottom.style.marginTop = "16px";
@@ -596,7 +578,7 @@ function carousel(tr, btns){
 }
 function openLocal(it){
   lbBox.classList.toggle("tall", !!it.v);
-  lbBox.innerHTML = `<video src="cfs/${it.local}.mp4" poster="cfs/${it.local}.jpg" controls autoplay playsinline></video>`;
+  lbBox.innerHTML = `<video src="${it.dir||"cfs"}/${it.local}.mp4" poster="${it.dir||"cfs"}/${it.local}.jpg" controls autoplay playsinline></video>`;
   lb.hidden = false; document.getElementById("lbClose").focus();
   const bg = document.getElementById("bgVideo"); if (bg) bg.pause();
 }
