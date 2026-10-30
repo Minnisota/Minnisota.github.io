@@ -157,6 +157,22 @@ a{color:inherit}
 .brand-head h3{font-family:var(--f-display);font-weight:600;font-size:clamp(20px,2.6vw,28px);margin:0}
 .brand-head h3 em{font-style:normal;color:var(--red)}
 .brand-wide{margin-bottom:16px}
+.r11{aspect-ratio:1/1}
+.mg-sub{margin:26px 0 12px}
+.brand-head + .mg-sub{margin-top:4px}
+.mg-small{display:grid;gap:10px}
+.mg-badges{grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr))}
+.mg-icons{grid-template-columns:repeat(auto-fill,minmax(min(100%,96px),1fr))}
+.mg-small .card{border-radius:5px}
+.mg-small .card:hover{transform:translateY(-2px)}
+.mg-small .meta{padding:7px 10px;font-size:12px}
+.mg-frame video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.mg-frame iframe.sq{width:177.78%;height:100%;transform:translate(-50%,-50%) scale(1.9)}
+.thumb.mg-frame video{opacity:1}
+.folder-name em{font-style:normal;color:var(--red)}
+.lb-box.sq{aspect-ratio:1/1;width:auto;height:min(80vh,100%);max-width:100%}
+.lb-box.sq video{width:100%;height:100%;object-fit:contain}
+
 .ai-home{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.6fr);gap:16px;align-items:start}
 .ai-side{display:grid;gap:16px}
 .mg-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
@@ -313,8 +329,15 @@ const MG = [
   {f:"name-reveal", t:"Name Reveal", z:1.9},
   {f:"acceleration", t:"Acceleration", z:2.4},
   {f:"max-speed", t:"Max Speed", z:2.4},
-  {f:"icon-charging", t:"Иконка · Charging", z:1.8},
-  {f:"icon-station", t:"Иконка · Station map", z:1.8},
+  {f:"icon-charging", t:"Charging", z:1.8, icon:true},
+  {f:"icon-station", t:"Station map", z:1.8, icon:true},
+  {v:"ev-charger", t:"EV Charger", icon:true},
+  {v:"aerodynamics", t:"Aerodynamics", icon:true},
+  {v:"battery-protection", t:"Battery protection", icon:true},
+  {v:"battery-temperature", t:"Battery temperature", icon:true},
+  {v:"battery-low", t:"Battery low", icon:true},
+  {v:"temperature", t:"Temperature", icon:true},
+  {v:"mobile-app", t:"Mobile app", icon:true},
 ];
 const CATS = [
   {id:"ai", name:"Нейросети", note:"Ролики и моушн-графика, собранные с помощью нейросетей.", shape:"ai",
@@ -373,9 +396,18 @@ CATS.forEach(c => {
     c.items.forEach((it,i) => ac.appendChild(card(it,i,"r169")));
   } else if (c.shape === "ai"){
     const mgCard = m => {
-      const a = document.createElement("a"); a.className = "card mg"; a.href = "zeekr/"+m.f+".html"; a.target = "_blank"; a.rel = "noopener";
-      a.innerHTML = `<div class="thumb r169 mg-frame" style="--z:${m.z}"><iframe data-src="zeekr/${m.f}.html" title="${m.t}" tabindex="-1" loading="lazy"></iframe><span class="plat">Моушн</span></div><div class="meta"><span class="ttl">${m.t}</span><span>ZEEKR</span></div>`;
-      a.addEventListener("click", e => { e.preventDefault(); openFrame("zeekr/"+m.f+".html"); });
+      const a = document.createElement("a"); a.className = "card mg"; a.rel = "noopener"; a.target = "_blank";
+      const ratio = m.icon ? "r11" : "r169";
+      if (m.v){
+        a.href = "zeekr/v/"+m.v+".mp4";
+        a.innerHTML = `<div class="thumb ${ratio} mg-frame"><video class="mg-vid" muted loop playsinline preload="none" poster="zeekr/v/${m.v}.jpg" data-src="zeekr/v/${m.v}.mp4"></video></div><div class="meta"><span class="ttl">${m.t}</span></div>`;
+        a.addEventListener("click", e => { e.preventDefault(); openSquare("zeekr/v/"+m.v+".mp4"); });
+      } else {
+        a.href = "zeekr/"+m.f+".html";
+        const z = m.icon ? 1 : m.z;
+        a.innerHTML = `<div class="thumb ${ratio} mg-frame" style="--z:${z}"><iframe data-src="zeekr/${m.f}.html" title="${m.t}" tabindex="-1" loading="lazy" ${m.icon ? 'class="sq"' : ""}></iframe></div><div class="meta"><span class="ttl">${m.t}</span></div>`;
+        a.addEventListener("click", e => { e.preventDefault(); m.icon ? openSquareFrame("zeekr/"+m.f+".html") : openFrame("zeekr/"+m.f+".html"); });
+      }
       return a;
     };
     const home = document.createElement("div"); home.className = "ai-home";
@@ -390,17 +422,20 @@ CATS.forEach(c => {
             <span class="peek-card p2 mg-frame" style="--z:1.1"><iframe data-src="zeekr/dimensions.html" tabindex="-1" title=""></iframe></span>
           </span>
           <span class="folder-row">
-            <span class="folder-txt"><span class="folder-name">Моушн-графика</span><span class="mono">ZEEKR · бейджи и иконки · ${MG.length} ${ru(MG.length)}</span></span>
+            <span class="folder-txt"><span class="folder-name">Моушн-графика <em>ZMZEEKR</em></span><span class="mono">Плашки и иконки · ${MG.length} ${ru(MG.length)}</span></span>
             <span class="folder-go">Открыть папку →</span>
           </span>
         </span>
       </a>`);
     home.append(reel, side);
     const view = document.createElement("div"); view.className = "brand-block"; view.id = "motion-graphics"; view.hidden = true;
-    view.innerHTML = `<a class="back" href="#ai">← Нейросети</a><div class="brand-head"><h3>Моушн-графика <em>ZEEKR</em></h3><span class="mono">${MG.length} ${ru(MG.length)}</span></div>`;
-    const all = document.createElement("div"); all.className = "grid g-wide";
-    MG.forEach(m => all.appendChild(mgCard(m)));
-    view.appendChild(all);
+    view.innerHTML = `<a class="back" href="#ai">← Нейросети</a><div class="brand-head"><h3>Моушн-графика <em>ZMZEEKR</em></h3><span class="mono">${MG.length} ${ru(MG.length)}</span></div>`;
+    [["Плашки", MG.filter(m => !m.icon), "mg-badges"], ["Иконки", MG.filter(m => m.icon), "mg-icons"]].forEach(([label, list, cls]) => {
+      view.insertAdjacentHTML("beforeend", `<p class="mg-sub mono">${label} · ${list.length}</p>`);
+      const g = document.createElement("div"); g.className = "mg-small " + cls;
+      list.forEach(m => g.appendChild(mgCard(m)));
+      view.appendChild(g);
+    });
     body.append(home, view);
     const route = () => {
       const open = location.hash === "#motion-graphics";
@@ -500,7 +535,7 @@ nav.insertAdjacentHTML("beforeend", `<li><a href="#contact">Контакты</a>
 
 /* lightbox */
 const lb = document.getElementById("lb"), lbBox = document.getElementById("lbBox");
-function openLB(id){ lbBox.classList.remove("tall"); lbBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen title="Видео"></iframe>`; lb.hidden = false; document.getElementById("lbClose").focus(); }
+function openLB(id){ lbBox.classList.remove("tall","sq"); lbBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen title="Видео"></iframe>`; lb.hidden = false; document.getElementById("lbClose").focus(); }
 
 /* carousel: slides keep moving from right to left; pauses while hovered, touched or a video preview plays */
 function carousel(tr, btns){
@@ -546,14 +581,31 @@ function openLocal(it){
 const frameIO = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => {
   if (e.isIntersecting && !e.target.src){ e.target.src = e.target.dataset.src; frameIO.unobserve(e.target); }
 }), {rootMargin:"200px"}) : null;
-function lazyFrames(){ document.querySelectorAll("iframe[data-src]:not([src])").forEach(f => frameIO ? frameIO.observe(f) : (f.src = f.dataset.src)); }
+const vidIO = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => {
+  const v = e.target;
+  if (e.isIntersecting){ if (!v.src){ v.addEventListener("loadedmetadata", () => { v.currentTime = 1.5; }, {once:true}); v.src = v.dataset.src; } v.play().catch(()=>{}); } else v.pause();
+}), {rootMargin:"100px"}) : null;
+function lazyFrames(){
+  document.querySelectorAll("iframe[data-src]:not([src])").forEach(f => frameIO ? frameIO.observe(f) : (f.src = f.dataset.src));
+  document.querySelectorAll("video.mg-vid:not([data-obs])").forEach(v => { v.dataset.obs = 1; if (vidIO) vidIO.observe(v); else { v.src = v.dataset.src; v.autoplay = true; } });
+}
+function openSquare(src){
+  lbBox.classList.remove("tall"); lbBox.classList.add("sq");
+  lbBox.innerHTML = `<video src="${src}" autoplay loop muted playsinline></video>`;
+  lb.hidden = false; document.getElementById("lbClose").focus();
+}
+function openSquareFrame(src){
+  lbBox.classList.remove("tall"); lbBox.classList.add("sq");
+  lbBox.innerHTML = `<iframe src="${src}" title="Иконка"></iframe>`;
+  lb.hidden = false; document.getElementById("lbClose").focus();
+}
 function openFrame(src){
-  lbBox.classList.remove("tall");
+  lbBox.classList.remove("tall","sq");
   lbBox.innerHTML = `<iframe src="${src}" title="Моушн-графика"></iframe>`;
   lb.hidden = false; document.getElementById("lbClose").focus();
 }
 lazyFrames();
-function closeLB(){ lb.hidden = true; lbBox.innerHTML = ""; lbBox.classList.remove("tall"); const bg = document.getElementById("bgVideo"); if (bg) bg.play().catch(()=>{}); }
+function closeLB(){ lb.hidden = true; lbBox.innerHTML = ""; lbBox.classList.remove("tall","sq"); const bg = document.getElementById("bgVideo"); if (bg) bg.play().catch(()=>{}); }
 document.getElementById("lbClose").onclick = closeLB;
 lb.addEventListener("click", e => { if (e.target === lb) closeLB(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !lb.hidden) closeLB(); });
