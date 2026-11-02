@@ -293,6 +293,11 @@ a{color:inherit}
 .clients ul.logos b{padding:0}
 .logo.bare{border:0;background:none;border-radius:0;overflow:visible}
 .logo.bare img{object-fit:contain}
+.brand-tiles{grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr))}
+.btile-bg img{opacity:.75;filter:none;height:70%}
+.btile:hover .btile-bg img{opacity:.95}
+.btile-bg::after{background:linear-gradient(180deg,transparent 40%,var(--char) 70%)}
+.btile .btile-logo.img{position:absolute;left:20px;top:20px}
 </style>
 </head>
 <body>
@@ -386,10 +391,11 @@ const MG = [
 const CATS = [
   {id:"ai", name:"Нейросети", note:"Ролики и моушн-графика, собранные с помощью нейросетей.", shape:"ai",
    items:[]},
-  {id:"ads", name:"Реклама", note:"Рекламные ролики для «Черкизово», «Сбер Обучение» и не только.", shape:"brands",
+  {id:"ads", name:"Реклама", note:"Рекламные ролики для «Черкизово», «Сбер Университет», «Jams Jams Home» и не только.", shape:"brands",
    brands:[
      {id:"cherkizovo", logo:"cfs/logo.png", name:"Черкизово", em:"Food Service", items:CFS.map(v => ({p:"Видео", local:v.f, t:v.t, v:v.v, url:"cfs/"+v.f+".mp4"}))},
-     {id:"sber", cover:"sber/cover.jpg", name:"Сбер", em:"Обучение", items:[]},
+     {id:"sber", cover:"sber/cover.jpg", name:"Сбер", em:"Университет", items:[]},
+     {id:"jams", cover:"jams/jams-1.jpg", name:"Jams Jams", em:"Home", items:[{p:"Видео", dir:"jams", local:"jams-1", t:"Jams Jams Home", v:false, url:"jams/jams-1.mp4"}]},
    ]},
   {id:"youtube", name:"YouTube", note:"Съёмка и монтаж роликов для YouTube.", shape:"wide",
    items:[yt("ExyTx9QbQtY"), yt("g-KaVCnvbvY"), yt("6Ac7YRoX-0o")]},
@@ -510,12 +516,21 @@ CATS.forEach(c => {
     window.addEventListener("hashchange", route);
     setTimeout(route, 0);
   } else if (c.shape === "brands"){
-    /* each brand is shown in place: heading + its videos (no folders) */
-    c.brands.filter(b => b.items.length).forEach(b => {
+    /* brand folders: a tile opens that brand's videos (#brand-<id>), "Все бренды" goes back */
+    const tiles = document.createElement("div"); tiles.className = "brand-tiles";
+    body.appendChild(tiles);
+    c.brands.forEach(b => {
       const n = b.items.length;
-      const blk = document.createElement("div"); blk.className = "brand-block"; blk.id = "brand-" + b.id;
+      const first = b.items.find(it => it.local);
+      const bg = b.cover ? b.cover : first ? `${first.dir||"cfs"}/${first.local}.jpg` : "";
+      tiles.insertAdjacentHTML("beforeend", `<a class="btile" href="#brand-${b.id}">
+          <span class="btile-bg">${bg ? `<img src="${bg}" alt="" loading="lazy">` : ""}</span>
+          ${b.logo ? `<span class="btile-logo img"><img src="${b.logo}" alt="${b.name} ${b.em}"></span>` : ""}
+          <span class="btile-txt"><span class="btile-name">${b.name} <em>${b.em}</em></span><span class="mono">${n ? n + " " + ru(n) : "Скоро"} · Открыть →</span></span>
+        </a>`);
+      const blk = document.createElement("div"); blk.className = "brand-block"; blk.id = "brand-" + b.id; blk.hidden = true;
       const verts = b.items.filter(it => it.local && it.v), rest = b.items.filter(it => !(it.local && it.v));
-      blk.innerHTML = `<div class="brand-head"><h3>${b.name} <em>${b.em}</em></h3>${verts.length > 2 ? `<div class="car-btns"><button type="button" aria-label="Назад">←</button><button type="button" aria-label="Вперёд">→</button></div>` : `<span class="mono">${n} ${ru(n)}</span>`}</div>`;
+      blk.innerHTML = `<a class="back" href="#ads">← Все бренды</a><div class="brand-head"><h3>${b.name} <em>${b.em}</em></h3>${verts.length > 2 ? `<div class="car-btns"><button type="button" aria-label="Назад">←</button><button type="button" aria-label="Вперёд">→</button></div>` : `<span class="mono">${n} ${ru(n)}</span>`}</div>`;
       if (verts.length){
         const car = document.createElement("div"); car.className = "car";
         const tr = document.createElement("div"); tr.className = "car-track";
@@ -524,12 +539,21 @@ CATS.forEach(c => {
         carousel(tr, blk.querySelectorAll(".car-btns button"));
       }
       if (rest.length){
-        const g = document.createElement("div"); g.className = "grid g-wide brand-wide after" + (rest.length === 1 ? " one" : "");
-        rest.forEach((it,i) => g.appendChild(card(it,i, it.yt ? "r169" : "r169")));
+        const g = document.createElement("div"); g.className = "grid g-wide brand-wide" + (verts.length ? " after" : "") + (rest.length === 1 ? " one" : "");
+        rest.forEach((it,i) => g.appendChild(card(it,i,"r169")));
         blk.append(g);
       }
+      if (!n) blk.insertAdjacentHTML("beforeend", `<p class="empty">Работы скоро появятся.</p>`);
       body.appendChild(blk);
     });
+    const route = () => {
+      const h = location.hash.slice(1), open = h.startsWith("brand-") && document.getElementById(h);
+      tiles.hidden = !!open;
+      body.querySelectorAll(".brand-block").forEach(b => b.hidden = b !== open);
+      if (open || h === "ads") requestAnimationFrame(() => s.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}));
+    };
+    window.addEventListener("hashchange", route);
+    setTimeout(route, 0);
   } else if (c.shape === "mix"){
     const top = document.createElement("div"); top.className = "grid g-wide";
     const bottom = document.createElement("div"); bottom.className = "grid g-tall"; bottom.style.marginTop = "16px";
