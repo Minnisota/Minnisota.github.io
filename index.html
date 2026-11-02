@@ -329,6 +329,7 @@ a{color:inherit}
 .promo-track .btile:hover .play{transform:scale(1.1)}
 .promo-track .btile{min-height:clamp(240px,22vw,310px)!important}
 .promo-track .btile .play{top:40%}
+@media (max-width:640px){ .hero-copy{padding-bottom:84px} .sound{bottom:20px;right:auto;left:max(16px,env(safe-area-inset-left,0px))} }
 </style>
 </head>
 <body>
@@ -424,15 +425,6 @@ const CATS = [
   {id:"youtube", name:"YouTube", note:"Съёмка и монтаж роликов для YouTube.", shape:"ytcar",
    logos:[{src:"yt/tachka.png", alt:"Тачка под задачку"}, {src:"yt/avtokultura.png", alt:"Автокультура"}, {src:"yt/buckets.png", alt:"Buckets Empire"}],
    items:[yt("g-KaVCnvbvY"), yt("6Ac7YRoX-0o"), yt("ExyTx9QbQtY")]},
-  {id:"auto", name:"Автомобили", note:"Автомобильные съёмки.", shape:"ytcar",
-   items:[
-     {p:"Видео", dir:".", local:"bg", t:"Lancer VI TME и Pajero", v:false, url:"bg.mp4"},
-     {p:"Видео", dir:"cars", local:"ferrari", t:"Честный Михаил · Ferrari", v:false, url:"cars/ferrari.mp4"},
-     {p:"Видео", dir:"cars", local:"bmw-m3", t:"BMW M3", v:false, url:"cars/bmw-m3.mp4"},
-     {p:"Видео", dir:"cars", local:"bmw-m8", t:"BMW M8", v:false, url:"cars/bmw-m8.mp4"},
-     {p:"Видео", dir:"cars", local:"mark-ii", t:"Mark II 90", v:false, url:"cars/mark-ii.mp4"},
-     {p:"Видео", dir:"cars", local:"lancer-tme", t:"Lancer TME", v:false, url:"cars/lancer-tme.mp4"},
-   ]},
   {id:"reels", name:"Reels", note:"Вертикальные ролики для соцсетей.", shape:"reelcar",
    items:[
      {p:"Reels", dir:"reels", local:"g-wagon", t:"G-Wagon", v:true, url:"reels/g-wagon.mp4"},
@@ -450,6 +442,15 @@ const CATS = [
      {id:"promoto", name:"PROMOTO", em:"Harley-Davidson", items:[{p:"Видео", dir:"promoto", local:"harley", t:"PROMOTO · Harley-Davidson", v:false, url:"promoto/harley.mp4"}]},
      {id:"sber", name:"Сбер", em:"Университет", note:"В рамках работы был отработан полноценный курс обучения, но к сожалению выложить я имею право только этот кусок.", items:[{p:"Видео", dir:"sber", local:"sber-1", t:"Сбер Университет", v:false, url:"sber/sber-1.mp4"}]},
      {id:"jams", name:"Jams Jams", em:"Home", items:[{p:"Видео", dir:"jams", local:"jams-1", t:"Jams Jams Home", v:false, url:"jams/jams-1.mp4"}]},
+   ]},
+  {id:"auto", name:"Автомобили", note:"Автомобильные съёмки.", shape:"ytcar",
+   items:[
+     {p:"Видео", dir:".", local:"bg", t:"Lancer VI TME и Pajero", v:false, url:"bg.mp4"},
+     {p:"Видео", dir:"cars", local:"ferrari", t:"Честный Михаил · Ferrari", v:false, url:"cars/ferrari.mp4"},
+     {p:"Видео", dir:"cars", local:"bmw-m3", t:"BMW M3", v:false, url:"cars/bmw-m3.mp4"},
+     {p:"Видео", dir:"cars", local:"bmw-m8", t:"BMW M8", v:false, url:"cars/bmw-m8.mp4"},
+     {p:"Видео", dir:"cars", local:"mark-ii", t:"Mark II 90", v:false, url:"cars/mark-ii.mp4"},
+     {p:"Видео", dir:"cars", local:"lancer-tme", t:"Lancer TME", v:false, url:"cars/lancer-tme.mp4"},
    ]},
   {id:"ai", name:"Нейросети", note:"Ролики и моушн-графика, собранные с помощью нейросетей.", shape:"ai",
    items:[]},
