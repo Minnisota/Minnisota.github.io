@@ -433,6 +433,15 @@ const CATS = [
      {p:"Видео", dir:"cars", local:"mark-ii", t:"Mark II 90", v:false, url:"cars/mark-ii.mp4"},
      {p:"Видео", dir:"cars", local:"lancer-tme", t:"Lancer TME", v:false, url:"cars/lancer-tme.mp4"},
    ]},
+  {id:"reels", name:"Reels", note:"Вертикальные ролики для соцсетей.", shape:"reelcar",
+   items:[
+     {p:"Reels", dir:"reels", local:"g-wagon", t:"G-Wagon", v:true, url:"reels/g-wagon.mp4"},
+     {p:"Reels", dir:"reels", local:"eclipse", t:"Mitsubishi Eclipse", v:true, url:"reels/eclipse.mp4"},
+     {p:"Reels", dir:"reels", local:"fashion", t:"Fashion", v:true, url:"reels/fashion.mp4"},
+     {p:"Reels", dir:"reels", local:"winline", t:"Winline Basket", v:true, url:"reels/winline.mp4"},
+     {p:"Reels", dir:"reels", local:"img-5425", t:"Nissan Silvia S15", v:true, url:"reels/img-5425.mp4"},
+     {p:"Reels", dir:"reels", local:"bmw-japan", t:"BMW Japan Style", v:true, url:"reels/bmw-japan.mp4"},
+   ]},
   {id:"promo", name:"Реклама", note:"Рекламные ролики для «Черкизово», «Сбер Университет» и не только.",
    logos:[{src:"clients/sber-round.png", alt:"Сбер Университет"}, {src:"clients/cherkizovo-round.png", alt:"Черкизово"}, {src:"jams/logo-round.png", alt:"Jams Jams Home"}], shape:"brands",
    brands:[
@@ -618,6 +627,14 @@ CATS.forEach(c => {
     const bottom = document.createElement("div"); bottom.className = "grid g-tall"; bottom.style.marginTop = "16px";
     c.items.forEach((it,i) => (it.yt ? top : bottom).appendChild(card(it,i, it.yt ? "r169" : "r45")));
     body.append(top, bottom);
+  } else if (c.shape === "reelcar"){
+    const head = document.createElement("div"); head.className = "car-row";
+    head.innerHTML = `<div class="car-btns"><button type="button" aria-label="Назад">←</button><button type="button" aria-label="Вперёд">→</button></div>`;
+    const car = document.createElement("div"); car.className = "car";
+    const tr = document.createElement("div"); tr.className = "car-track";
+    c.items.forEach((it,i) => tr.appendChild(card(it,i,"r916")));
+    car.append(tr); body.append(head, car);
+    carousel(tr, head.querySelectorAll(".car-btns button"));
   } else if (c.shape === "ytcar"){
     const head = document.createElement("div"); head.className = "car-row";
     head.innerHTML = `<div class="car-btns"><button type="button" aria-label="Назад">←</button><button type="button" aria-label="Вперёд">→</button></div>`;
@@ -667,7 +684,7 @@ nav.insertAdjacentHTML("beforeend", `<li><a href="#contact">Контакты</a>
 
 /* Автомобили: videos play by themselves (muted) while they are on screen */
 (() => {
-  const vids = document.querySelectorAll("#auto .thumb video");
+  const vids = document.querySelectorAll("#auto .thumb video, #reels .thumb video");
   vids.forEach(v => { v.muted = true; v.loop = true; v.playsInline = true; v.closest(".card").classList.add("autoplay"); });
   const io = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => {
     const v = e.target;
