@@ -298,6 +298,8 @@ a{color:inherit}
 .btile:hover .btile-bg img{opacity:.95}
 .btile-bg::after{background:linear-gradient(180deg,transparent 40%,var(--char) 70%)}
 .btile .btile-logo.img{position:absolute;left:20px;top:20px}
+.btile .btile-logo.img img{height:56px;width:auto;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.btile .btile-logo.round img{height:64px;width:64px;border-radius:50%}
 </style>
 </head>
 <body>
@@ -394,9 +396,9 @@ const CATS = [
    items:[]},
   {id:"ads", name:"Реклама", note:"Рекламные ролики для «Черкизово», «Сбер Университет», «Jams Jams Home» и не только.", shape:"brands",
    brands:[
-     {id:"cherkizovo", logo:"cfs/logo.png", name:"Черкизово", em:"Food Service", items:CFS.map(v => ({p:"Видео", local:v.f, t:v.t, v:v.v, url:"cfs/"+v.f+".mp4"}))},
+     {id:"cherkizovo", logo:"clients/cherkizovo-round.png", round:true, cover:"cfs/cover.jpg", name:"Черкизово", em:"Food Service", items:CFS.map(v => ({p:"Видео", local:v.f, t:v.t, v:v.v, url:"cfs/"+v.f+".mp4"}))},
      {id:"sber", cover:"sber/cover.jpg", name:"Сбер", em:"Университет", items:[]},
-     {id:"jams", cover:"jams/jams-1.jpg", name:"Jams Jams", em:"Home", items:[{p:"Видео", dir:"jams", local:"jams-1", t:"Jams Jams Home", v:false, url:"jams/jams-1.mp4"}]},
+     {id:"jams", cover:"jams/jams-1.jpg", logo:"jams/logo.png", name:"Jams Jams", em:"Home", items:[{p:"Видео", dir:"jams", local:"jams-1", t:"Jams Jams Home", v:false, url:"jams/jams-1.mp4"}]},
    ]},
   {id:"youtube", name:"YouTube", note:"Съёмка и монтаж роликов для YouTube.", shape:"wide",
    items:[yt("ExyTx9QbQtY"), yt("g-KaVCnvbvY"), yt("6Ac7YRoX-0o")]},
@@ -526,7 +528,7 @@ CATS.forEach(c => {
       const bg = b.cover ? b.cover : first ? `${first.dir||"cfs"}/${first.local}.jpg` : "";
       tiles.insertAdjacentHTML("beforeend", `<a class="btile" href="#brand-${b.id}">
           <span class="btile-bg">${bg ? `<img src="${bg}" alt="" loading="lazy">` : ""}</span>
-          ${b.logo ? `<span class="btile-logo img"><img src="${b.logo}" alt="${b.name} ${b.em}"></span>` : ""}
+          ${b.logo ? `<span class="btile-logo img${b.round ? " round" : ""}"><img src="${b.logo}" alt="${b.name} ${b.em}"></span>` : ""}
           <span class="btile-txt"><span class="btile-name">${b.name} <em>${b.em}</em></span><span class="mono">${n ? n + " " + ru(n) : "Скоро"} · Открыть →</span></span>
         </a>`);
       const blk = document.createElement("div"); blk.className = "brand-block"; blk.id = "brand-" + b.id; blk.hidden = true;
