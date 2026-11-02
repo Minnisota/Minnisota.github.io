@@ -318,6 +318,13 @@ a{color:inherit}
 .card.autoplay .play{opacity:0;transition:opacity .2s}
 .card.autoplay:hover .play{opacity:1}
 .brand-tiles + .brand-block.inline,.brand-block.inline{margin-top:clamp(36px,5vw,56px)}
+.ads-track{align-items:stretch}
+.ads-track .btile{flex:0 0 clamp(260px,38vw,460px);min-height:0;justify-content:flex-end}
+.ads-track .btile .btile-bg img{height:100%}
+.ads-track .btile .btile-bg::after{background:linear-gradient(180deg,transparent 45%,var(--char) 92%)}
+.ads-notes{margin-top:18px}
+.ads-notes .brand-note{margin:0}
+.ads-notes b{color:var(--bone);font-weight:600}
 </style>
 </head>
 <body>
@@ -545,13 +552,22 @@ CATS.forEach(c => {
     setTimeout(route, 0);
   } else if (c.shape === "brands"){
     /* brand folders: a tile opens that brand's videos (#brand-<id>), "Все бренды" goes back */
-    const tiles = document.createElement("div"); tiles.className = "brand-tiles";
+    /* one carousel row: folder tiles + videos of the other brands */
+    const tiles = document.createElement("div"); tiles.className = "ads-row";
+    tiles.innerHTML = `<div class="car-row"><div class="car-btns"><button type="button" aria-label="Назад">←</button><button type="button" aria-label="Вперёд">→</button></div></div><div class="car"><div class="car-track wide ads-track"></div></div>`;
+    const atr = tiles.querySelector(".ads-track");
+    const notes = [];
     body.appendChild(tiles);
     c.brands.forEach(b => {
+      if (!b.folder){
+        b.items.forEach((it,i) => { const cd = card(it,i,"r169"); cd.querySelector(".ttl").textContent = b.name + " " + b.em; atr.appendChild(cd); });
+        if (b.note) notes.push(`<p class="brand-note"><b>${b.name} ${b.em}.</b> ${b.note}</p>`);
+        return;
+      }
       const n = b.items.length;
       const first = b.items.find(it => it.local);
       const bg = b.cover ? b.cover : first ? `${first.dir||"cfs"}/${first.local}.jpg` : "";
-      if (b.folder) tiles.insertAdjacentHTML("beforeend", `<a class="btile" href="#brand-${b.id}">
+      atr.insertAdjacentHTML("beforeend", `<a class="btile" href="#brand-${b.id}">
           <span class="btile-bg">${b.coverVideo ? `<video src="${b.coverVideo}" poster="${bg}" muted loop autoplay playsinline preload="metadata"></video>` : bg ? `<img src="${bg}" alt="" loading="lazy">` : ""}</span>
           ${b.logo ? `<span class="btile-logo img${b.round ? " round" : ""}"><img src="${b.logo}" alt="${b.name} ${b.em}"></span>` : ""}
           <span class="btile-txt"><span class="btile-name">${b.name} <em>${b.em}</em></span><span class="mono">${n ? n + " " + ru(n) : "Скоро"} · Открыть →</span></span>
@@ -575,10 +591,12 @@ CATS.forEach(c => {
       if (!n) blk.insertAdjacentHTML("beforeend", `<p class="empty">Работы скоро появятся.</p>`);
       body.appendChild(blk);
     });
+    if (notes.length) tiles.insertAdjacentHTML("beforeend", `<div class="ads-notes">${notes.join("")}</div>`);
+    carousel(atr, tiles.querySelectorAll(".car-btns button"));
     const route = () => {
       const h = location.hash.slice(1), open = h.startsWith("brand-") && document.getElementById(h);
       tiles.hidden = !!open;
-      body.querySelectorAll(".brand-block").forEach(b => b.hidden = open ? b !== open : !b.classList.contains("inline"));
+      body.querySelectorAll(".brand-block").forEach(b => b.hidden = b !== open);
       if (open || h === "ads") requestAnimationFrame(() => s.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}));
     };
     window.addEventListener("hashchange", route);
