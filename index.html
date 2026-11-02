@@ -325,6 +325,10 @@ a{color:inherit}
 .promo-notes{margin-top:18px}
 .promo-notes .brand-note{margin:0}
 .promo-notes b{color:var(--bone);font-weight:600}
+.promo-track .btile .play{top:42%}
+.promo-track .btile:hover .play{transform:scale(1.1)}
+.promo-track .btile{min-height:clamp(240px,22vw,310px)!important}
+.promo-track .btile .play{top:40%}
 </style>
 </head>
 <body>
@@ -560,7 +564,14 @@ CATS.forEach(c => {
     body.appendChild(tiles);
     c.brands.forEach(b => {
       if (!b.folder){
-        b.items.forEach((it,i) => { const cd = card(it,i,"r169"); cd.querySelector(".ttl").textContent = b.name + " " + b.em; atr.appendChild(cd); });
+        b.items.forEach(it => {
+          const a = document.createElement("a"); a.className = "btile"; a.href = it.url;
+          a.innerHTML = `<span class="btile-bg"><img src="${it.dir}/${it.local}.jpg" alt="" loading="lazy"></span>
+            <span class="play" aria-hidden="true"></span>
+            <span class="btile-txt"><span class="btile-name">${b.name} <em>${b.em}</em></span><span class="mono">Видео · Смотреть →</span></span>`;
+          a.addEventListener("click", e => { e.preventDefault(); openLocal(it); });
+          atr.appendChild(a);
+        });
         if (b.note) notes.push(`<p class="brand-note"><b>${b.name} ${b.em}.</b> ${b.note}</p>`);
         return;
       }
