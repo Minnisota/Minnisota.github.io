@@ -306,6 +306,11 @@ a{color:inherit}
 .car-row{display:flex;justify-content:flex-end;margin:-8px 0 14px}
 .car-track.wide .card{flex:0 0 clamp(260px,38vw,460px)}
 .brand-note{margin:-4px 0 18px;max-width:62ch;color:var(--mute);font-size:15px}
+.ch-logos{display:flex;flex-wrap:wrap;gap:clamp(14px,3vw,28px);margin-top:18px}
+.ch-logos figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:8px;width:clamp(76px,10vw,104px)}
+.ch-logos img{width:100%;height:auto;aspect-ratio:1/1;border-radius:50%;display:block;box-shadow:0 0 0 1px var(--line)}
+.ch-logos figcaption{font-size:12px;color:var(--mute);text-align:center;line-height:1.3}
+.btile-bg video{width:100%;height:70%;object-fit:cover;opacity:.85;display:block}
 </style>
 </head>
 <body>
@@ -411,8 +416,14 @@ const CATS = [
    items:[yt("g-KaVCnvbvY"), yt("6Ac7YRoX-0o"), yt("ExyTx9QbQtY")]},
   {id:"podcast", name:"Подкаст", note:"Многокамерная запись и монтаж подкаста.", shape:"wide",
    items:[yt("QXucdwinLlM")]},
-  {id:"auto", name:"Автомобили", note:"Автомобильные съёмки.", shape:"single",
-   items:[{p:"Видео", dir:".", local:"bg", t:"Lancer VI TME и Pajero", v:false, url:"bg.mp4"}]},
+  {id:"auto", name:"Автомобили", note:"Автомобильные съёмки.", shape:"wide",
+   items:[
+     {p:"Видео", dir:".", local:"bg", t:"Lancer VI TME и Pajero", v:false, url:"bg.mp4"},
+     {p:"Видео", dir:"cars", local:"bmw-m3", t:"BMW M3", v:false, url:"cars/bmw-m3.mp4"},
+     {p:"Видео", dir:"cars", local:"racer-valions", t:"Promo Racer Valions", v:false, url:"cars/racer-valions.mp4"},
+     {p:"Видео", dir:"cars", local:"mark-ii", t:"Mark II 90", v:false, url:"cars/mark-ii.mp4"},
+     {p:"Видео", dir:"cars", local:"lancer-city", t:"Lancer Evolution VI в городе", v:false, url:"cars/lancer-city.mp4"},
+   ]},
 ];
 const ru = n => n%10===1&&n%100!==11 ? "работа" : (n%10>=2&&n%10<=4&&(n%100<10||n%100>=20) ? "работы" : "работ");
 
@@ -445,7 +456,7 @@ const main = document.getElementById("work"), nav = document.getElementById("nav
 CATS.forEach(c => {
   const s = document.createElement("section");
   s.className = "cat"; s.id = c.id; s.setAttribute("aria-labelledby", c.id+"-h");
-  s.innerHTML = `<div class="wrap"><div class="cat-head"><div><div class="ch-title"><h2 id="${c.id}-h">${c.name}</h2>${c.logos ? `<span class="ch-logos">${c.logos.map(l => `<img src="${l.src}" alt="${l.alt}" title="${l.alt}" loading="lazy">`).join("")}</span>` : ""}</div><p>${c.note}</p></div>${(n => `<span class="mono">${n} ${ru(n)}</span>`)((c.items||c.brands.flatMap(b=>b.items)).length + (c.shape==="ai" ? MG.length + AI_GEN.length : 0))}</div><div class="body"></div></div>`;
+  s.innerHTML = `<div class="wrap"><div class="cat-head"><div><h2 id="${c.id}-h">${c.name}</h2><p>${c.note}</p>${c.logos ? `<div class="ch-logos">${c.logos.map(l => `<figure><img src="${l.src}" alt="${l.alt}" loading="lazy"><figcaption>${l.alt}</figcaption></figure>`).join("")}</div>` : ""}</div>${(n => `<span class="mono">${n} ${ru(n)}</span>`)((c.items||c.brands.flatMap(b=>b.items)).length + (c.shape==="ai" ? MG.length + AI_GEN.length : 0))}</div><div class="body"></div></div>`;
   const body = s.querySelector(".body");
   if (c.shape === "auto"){
     body.className = "auto-split";
@@ -532,7 +543,7 @@ CATS.forEach(c => {
       const first = b.items.find(it => it.local);
       const bg = b.cover ? b.cover : first ? `${first.dir||"cfs"}/${first.local}.jpg` : "";
       tiles.insertAdjacentHTML("beforeend", `<a class="btile" href="#brand-${b.id}">
-          <span class="btile-bg">${bg ? `<img src="${bg}" alt="" loading="lazy">` : ""}</span>
+          <span class="btile-bg">${b.coverVideo ? `<video src="${b.coverVideo}" poster="${bg}" muted loop autoplay playsinline preload="metadata"></video>` : bg ? `<img src="${bg}" alt="" loading="lazy">` : ""}</span>
           ${b.logo ? `<span class="btile-logo img${b.round ? " round" : ""}"><img src="${b.logo}" alt="${b.name} ${b.em}"></span>` : ""}
           <span class="btile-txt"><span class="btile-name">${b.name} <em>${b.em}</em></span><span class="mono">${n ? n + " " + ru(n) : "Скоро"} · Открыть →</span></span>
         </a>`);
@@ -608,16 +619,10 @@ nav.insertAdjacentHTML("beforeend", `<li><a href="#contact">Контакты</a>
   const setSound = on => { v.muted = !on; v.volume = VOL; if (v.paused) v.play().catch(() => {}); ui(); };
   btn.hidden = false;
   btn.addEventListener("click", e => { e.stopPropagation(); userMuted = !v.muted; setSound(v.muted); });
-  /* try sound first; if blocked, fall back to muted autoplay */
-  v.muted = false;
-  v.play().then(ui).catch(() => { v.muted = true; v.play().catch(() => {}); ui(); });
-  const evs = ["pointerdown","keydown","touchend"];
-  const first = e => {
-    if (btn.contains(e.target)) return;
-    if (!userMuted && v.muted) setSound(true);
-    if (!v.muted) evs.forEach(ev => document.removeEventListener(ev, first));
-  };
-  evs.forEach(ev => document.addEventListener(ev, first, {passive:true}));
+  /* music is off when the page opens; the visitor turns it on with the button */
+  v.muted = true;
+  v.play().catch(() => {});
+  ui();
 })();
 
 /* lightbox */
