@@ -318,13 +318,13 @@ a{color:inherit}
 .card.autoplay .play{opacity:0;transition:opacity .2s}
 .card.autoplay:hover .play{opacity:1}
 .brand-tiles + .brand-block.inline,.brand-block.inline{margin-top:clamp(36px,5vw,56px)}
-.ads-track{align-items:stretch}
-.ads-track .btile{flex:0 0 clamp(260px,38vw,460px);min-height:0;justify-content:flex-end}
-.ads-track .btile .btile-bg img{height:100%}
-.ads-track .btile .btile-bg::after{background:linear-gradient(180deg,transparent 45%,var(--char) 92%)}
-.ads-notes{margin-top:18px}
-.ads-notes .brand-note{margin:0}
-.ads-notes b{color:var(--bone);font-weight:600}
+.promo-track{align-items:stretch}
+.promo-track .btile{flex:0 0 clamp(260px,38vw,460px);min-height:0;justify-content:flex-end}
+.promo-track .btile .btile-bg img{height:100%}
+.promo-track .btile .btile-bg::after{background:linear-gradient(180deg,transparent 45%,var(--char) 92%)}
+.promo-notes{margin-top:18px}
+.promo-notes .brand-note{margin:0}
+.promo-notes b{color:var(--bone);font-weight:600}
 </style>
 </head>
 <body>
@@ -429,7 +429,7 @@ const CATS = [
      {p:"Видео", dir:"cars", local:"mark-ii", t:"Mark II 90", v:false, url:"cars/mark-ii.mp4"},
      {p:"Видео", dir:"cars", local:"lancer-tme", t:"Lancer TME", v:false, url:"cars/lancer-tme.mp4"},
    ]},
-  {id:"ads", name:"Реклама", note:"Рекламные ролики для «Черкизово», «Сбер Университет» и не только.",
+  {id:"promo", name:"Реклама", note:"Рекламные ролики для «Черкизово», «Сбер Университет» и не только.",
    logos:[{src:"clients/sber-round.png", alt:"Сбер Университет"}, {src:"clients/cherkizovo-round.png", alt:"Черкизово"}, {src:"jams/logo-round.png", alt:"Jams Jams Home"}], shape:"brands",
    brands:[
      {id:"cherkizovo", folder:true, cover:"cfs/cover.jpg", name:"Черкизово", em:"Food Service", items:CFS.map(v => ({p:"Видео", local:v.f, t:v.t, v:v.v, url:"cfs/"+v.f+".mp4"}))},
@@ -553,9 +553,9 @@ CATS.forEach(c => {
   } else if (c.shape === "brands"){
     /* brand folders: a tile opens that brand's videos (#brand-<id>), "Все бренды" goes back */
     /* one carousel row: folder tiles + videos of the other brands */
-    const tiles = document.createElement("div"); tiles.className = "ads-row";
-    tiles.innerHTML = `<div class="car-row"><div class="car-btns"><button type="button" aria-label="Назад">←</button><button type="button" aria-label="Вперёд">→</button></div></div><div class="car"><div class="car-track wide ads-track"></div></div>`;
-    const atr = tiles.querySelector(".ads-track");
+    const tiles = document.createElement("div"); tiles.className = "promo-row";
+    tiles.innerHTML = `<div class="car-row"><div class="car-btns"><button type="button" aria-label="Назад">←</button><button type="button" aria-label="Вперёд">→</button></div></div><div class="car"><div class="car-track wide promo-track"></div></div>`;
+    const atr = tiles.querySelector(".promo-track");
     const notes = [];
     body.appendChild(tiles);
     c.brands.forEach(b => {
@@ -574,7 +574,7 @@ CATS.forEach(c => {
         </a>`);
       const blk = document.createElement("div"); blk.className = "brand-block" + (b.folder ? "" : " inline"); blk.id = "brand-" + b.id; blk.hidden = !!b.folder;
       const verts = b.items.filter(it => it.local && it.v), rest = b.items.filter(it => !(it.local && it.v));
-      blk.innerHTML = `${b.folder ? `<a class="back" href="#ads">← Все бренды</a>` : ""}<div class="brand-head"><h3>${b.name} <em>${b.em}</em></h3>${verts.length > 2 ? `<div class="car-btns"><button type="button" aria-label="Назад">←</button><button type="button" aria-label="Вперёд">→</button></div>` : `<span class="mono">${n} ${ru(n)}</span>`}</div>`;
+      blk.innerHTML = `${b.folder ? `<a class="back" href="#promo">← Все бренды</a>` : ""}<div class="brand-head"><h3>${b.name} <em>${b.em}</em></h3>${verts.length > 2 ? `<div class="car-btns"><button type="button" aria-label="Назад">←</button><button type="button" aria-label="Вперёд">→</button></div>` : `<span class="mono">${n} ${ru(n)}</span>`}</div>`;
       if (b.note) blk.insertAdjacentHTML("beforeend", `<p class="brand-note">${b.note}</p>`);
       if (verts.length){
         const car = document.createElement("div"); car.className = "car";
@@ -591,14 +591,14 @@ CATS.forEach(c => {
       if (!n) blk.insertAdjacentHTML("beforeend", `<p class="empty">Работы скоро появятся.</p>`);
       body.appendChild(blk);
     });
-    if (notes.length) tiles.insertAdjacentHTML("beforeend", `<div class="ads-notes">${notes.join("")}</div>`);
+    if (notes.length) tiles.insertAdjacentHTML("beforeend", `<div class="promo-notes">${notes.join("")}</div>`);
     try { carousel(atr, tiles.querySelectorAll(".car-btns button")); } catch(err){ console.error(err); }
     const route = () => {
       const h = location.hash.slice(1), el = h.startsWith("brand-") ? document.getElementById(h) : null;
       const open = el && el.classList.contains("brand-block") ? el : null;
       tiles.hidden = !!open;
       body.querySelectorAll(".brand-block").forEach(b => b.hidden = b !== open);
-      if (open || h === "ads") requestAnimationFrame(() => s.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}));
+      if (open || h === "promo") requestAnimationFrame(() => s.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}));
     };
     window.addEventListener("hashchange", route);
     setTimeout(route, 0);
