@@ -317,6 +317,7 @@ a{color:inherit}
 .card.autoplay .thumb video{opacity:1}
 .card.autoplay .play{opacity:0;transition:opacity .2s}
 .card.autoplay:hover .play{opacity:1}
+.brand-tiles + .brand-block.inline,.brand-block.inline{margin-top:clamp(36px,5vw,56px)}
 </style>
 </head>
 <body>
@@ -421,11 +422,12 @@ const CATS = [
      {p:"Видео", dir:"cars", local:"mark-ii", t:"Mark II 90", v:false, url:"cars/mark-ii.mp4"},
      {p:"Видео", dir:"cars", local:"lancer-tme", t:"Lancer TME", v:false, url:"cars/lancer-tme.mp4"},
    ]},
-  {id:"ads", name:"Реклама", note:"Рекламные ролики для «Черкизово», «Сбер Университет», «Jams Jams Home» и не только.", shape:"brands",
+  {id:"ads", name:"Реклама", note:"Рекламные ролики для «Черкизово», «Сбер Университет» и не только.",
+   logos:[{src:"clients/cherkizovo-round.png", alt:"Черкизово"}, {src:"clients/sber-round.png", alt:"Сбер Университет"}, {src:"jams/logo-round.png", alt:"Jams Jams Home"}], shape:"brands",
    brands:[
-     {id:"cherkizovo", logo:"clients/cherkizovo-round.png", round:true, cover:"cfs/cover.jpg", name:"Черкизово", em:"Food Service", items:CFS.map(v => ({p:"Видео", local:v.f, t:v.t, v:v.v, url:"cfs/"+v.f+".mp4"}))},
-     {id:"sber", cover:"sber/tile.jpg", logo:"clients/sber-round.png", round:true, name:"Сбер", em:"Университет", note:"В рамках работы был отработан полноценный курс обучения, но к сожалению выложить я имею право только этот кусок.", items:[{p:"Видео", dir:"sber", local:"sber-1", t:"Сбер Университет", v:false, url:"sber/sber-1.mp4"}]},
-     {id:"jams", cover:"jams/jams-1.jpg", logo:"jams/logo.png", name:"Jams Jams", em:"Home", items:[{p:"Видео", dir:"jams", local:"jams-1", t:"Jams Jams Home", v:false, url:"jams/jams-1.mp4"}]},
+     {id:"cherkizovo", folder:true, cover:"cfs/cover.jpg", name:"Черкизово", em:"Food Service", items:CFS.map(v => ({p:"Видео", local:v.f, t:v.t, v:v.v, url:"cfs/"+v.f+".mp4"}))},
+     {id:"sber", name:"Сбер", em:"Университет", note:"В рамках работы был отработан полноценный курс обучения, но к сожалению выложить я имею право только этот кусок.", items:[{p:"Видео", dir:"sber", local:"sber-1", t:"Сбер Университет", v:false, url:"sber/sber-1.mp4"}]},
+     {id:"jams", name:"Jams Jams", em:"Home", items:[{p:"Видео", dir:"jams", local:"jams-1", t:"Jams Jams Home", v:false, url:"jams/jams-1.mp4"}]},
    ]},
   {id:"ai", name:"Нейросети", note:"Ролики и моушн-графика, собранные с помощью нейросетей.", shape:"ai",
    items:[]},
@@ -549,14 +551,14 @@ CATS.forEach(c => {
       const n = b.items.length;
       const first = b.items.find(it => it.local);
       const bg = b.cover ? b.cover : first ? `${first.dir||"cfs"}/${first.local}.jpg` : "";
-      tiles.insertAdjacentHTML("beforeend", `<a class="btile" href="#brand-${b.id}">
+      if (b.folder) tiles.insertAdjacentHTML("beforeend", `<a class="btile" href="#brand-${b.id}">
           <span class="btile-bg">${b.coverVideo ? `<video src="${b.coverVideo}" poster="${bg}" muted loop autoplay playsinline preload="metadata"></video>` : bg ? `<img src="${bg}" alt="" loading="lazy">` : ""}</span>
           ${b.logo ? `<span class="btile-logo img${b.round ? " round" : ""}"><img src="${b.logo}" alt="${b.name} ${b.em}"></span>` : ""}
           <span class="btile-txt"><span class="btile-name">${b.name} <em>${b.em}</em></span><span class="mono">${n ? n + " " + ru(n) : "Скоро"} · Открыть →</span></span>
         </a>`);
-      const blk = document.createElement("div"); blk.className = "brand-block"; blk.id = "brand-" + b.id; blk.hidden = true;
+      const blk = document.createElement("div"); blk.className = "brand-block" + (b.folder ? "" : " inline"); blk.id = "brand-" + b.id; blk.hidden = !!b.folder;
       const verts = b.items.filter(it => it.local && it.v), rest = b.items.filter(it => !(it.local && it.v));
-      blk.innerHTML = `<a class="back" href="#ads">← Все бренды</a><div class="brand-head"><h3>${b.name} <em>${b.em}</em></h3>${verts.length > 2 ? `<div class="car-btns"><button type="button" aria-label="Назад">←</button><button type="button" aria-label="Вперёд">→</button></div>` : `<span class="mono">${n} ${ru(n)}</span>`}</div>`;
+      blk.innerHTML = `${b.folder ? `<a class="back" href="#ads">← Все бренды</a>` : ""}<div class="brand-head"><h3>${b.name} <em>${b.em}</em></h3>${verts.length > 2 ? `<div class="car-btns"><button type="button" aria-label="Назад">←</button><button type="button" aria-label="Вперёд">→</button></div>` : `<span class="mono">${n} ${ru(n)}</span>`}</div>`;
       if (b.note) blk.insertAdjacentHTML("beforeend", `<p class="brand-note">${b.note}</p>`);
       if (verts.length){
         const car = document.createElement("div"); car.className = "car";
@@ -576,7 +578,7 @@ CATS.forEach(c => {
     const route = () => {
       const h = location.hash.slice(1), open = h.startsWith("brand-") && document.getElementById(h);
       tiles.hidden = !!open;
-      body.querySelectorAll(".brand-block").forEach(b => b.hidden = b !== open);
+      body.querySelectorAll(".brand-block").forEach(b => b.hidden = open ? b !== open : !b.classList.contains("inline"));
       if (open || h === "ads") requestAnimationFrame(() => s.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}));
     };
     window.addEventListener("hashchange", route);
