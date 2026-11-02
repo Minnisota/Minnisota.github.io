@@ -370,6 +370,7 @@ const AI_GEN = [
   {img:"gen/miura-fog", t:"Lamborghini Miura · туманная ферма"},
 ];
 const MG = [
+  {v:"intro", t:"Intro · логотип ZMZEEKR"},
   {f:"dimensions", t:"Dimensions", z:1.28},
   {f:"interior", t:"Interior", z:1.55},
   {f:"zeekr-001", t:"ZEEKR 001", z:1.9},
@@ -450,8 +451,8 @@ CATS.forEach(c => {
       const ratio = "r169";
       if (m.v){
         a.href = "zeekr/v/"+m.v+".mp4";
-        a.innerHTML = `<div class="thumb ${ratio} mg-frame"><video class="mg-vid contain" muted loop playsinline preload="none" poster="zeekr/v/${m.v}.jpg" data-src="zeekr/v/${m.v}.mp4"></video></div><div class="meta"><span class="ttl">${m.t}</span></div>`;
-        a.addEventListener("click", e => { e.preventDefault(); openSquare("zeekr/v/"+m.v+".mp4"); });
+        a.innerHTML = `<div class="thumb ${ratio} mg-frame"><video class="mg-vid${m.icon ? " contain" : ""}" muted loop playsinline preload="none" poster="zeekr/v/${m.v}.jpg" data-src="zeekr/v/${m.v}.mp4"></video></div><div class="meta"><span class="ttl">${m.t}</span></div>`;
+        a.addEventListener("click", e => { e.preventDefault(); m.icon ? openSquare("zeekr/v/"+m.v+".mp4") : openWideVideo("zeekr/v/"+m.v+".mp4"); });
       } else {
         a.href = "zeekr/"+m.f+".html";
         const z = m.icon ? 1.3 : m.z;
@@ -662,6 +663,11 @@ function lazyFrames(){
 function openImage(src, alt){
   lbBox.classList.remove("tall","sq","img"); lbBox.classList.add("img");
   lbBox.innerHTML = `<img src="${src}" alt="${alt}">`;
+  lb.hidden = false; document.getElementById("lbClose").focus();
+}
+function openWideVideo(src){
+  lbBox.classList.remove("tall","sq","img");
+  lbBox.innerHTML = `<video src="${src}" autoplay loop muted playsinline controls></video>`;
   lb.hidden = false; document.getElementById("lbClose").focus();
 }
 function openSquare(src){
