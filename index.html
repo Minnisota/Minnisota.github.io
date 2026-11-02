@@ -300,6 +300,12 @@ a{color:inherit}
 .btile .btile-logo.img{position:absolute;left:20px;top:20px}
 .btile .btile-logo.img img{height:56px;width:auto;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.45)}
 .btile .btile-logo.round img{height:64px;width:64px;border-radius:50%}
+.ch-title{display:flex;align-items:center;gap:clamp(12px,2vw,20px);flex-wrap:wrap}
+.ch-logos{display:inline-flex;gap:8px}
+.ch-logos img{width:clamp(34px,4vw,46px);height:clamp(34px,4vw,46px);border-radius:50%;display:block;box-shadow:0 0 0 1px var(--line)}
+.car-row{display:flex;justify-content:flex-end;margin:-8px 0 14px}
+.car-track.wide .card{flex:0 0 clamp(260px,38vw,460px)}
+.brand-note{margin:-4px 0 18px;max-width:62ch;color:var(--mute);font-size:15px}
 </style>
 </head>
 <body>
@@ -397,11 +403,12 @@ const CATS = [
   {id:"ads", name:"Реклама", note:"Рекламные ролики для «Черкизово», «Сбер Университет», «Jams Jams Home» и не только.", shape:"brands",
    brands:[
      {id:"cherkizovo", logo:"clients/cherkizovo-round.png", round:true, cover:"cfs/cover.jpg", name:"Черкизово", em:"Food Service", items:CFS.map(v => ({p:"Видео", local:v.f, t:v.t, v:v.v, url:"cfs/"+v.f+".mp4"}))},
-     {id:"sber", cover:"sber/cover.jpg", name:"Сбер", em:"Университет", items:[]},
+     {id:"sber", cover:"sber/cover.jpg", name:"Сбер", em:"Университет", note:"В рамках работы был отработан полноценный курс обучения, но к сожалению выложить я имею право только этот кусок.", items:[{p:"Видео", dir:"sber", local:"sber-1", t:"Сбер Университет", v:false, url:"sber/sber-1.mp4"}]},
      {id:"jams", cover:"jams/jams-1.jpg", logo:"jams/logo.png", name:"Jams Jams", em:"Home", items:[{p:"Видео", dir:"jams", local:"jams-1", t:"Jams Jams Home", v:false, url:"jams/jams-1.mp4"}]},
    ]},
-  {id:"youtube", name:"YouTube", note:"Съёмка и монтаж роликов для YouTube.", shape:"wide",
-   items:[yt("ExyTx9QbQtY"), yt("g-KaVCnvbvY"), yt("6Ac7YRoX-0o")]},
+  {id:"youtube", name:"YouTube", note:"Съёмка и монтаж роликов для YouTube.", shape:"ytcar",
+   logos:[{src:"yt/tachka.png", alt:"Тачка под задачку"}, {src:"yt/avtokultura.png", alt:"Автокультура"}, {src:"yt/buckets.png", alt:"Buckets Empire"}],
+   items:[yt("g-KaVCnvbvY"), yt("6Ac7YRoX-0o"), yt("ExyTx9QbQtY")]},
   {id:"podcast", name:"Подкаст", note:"Многокамерная запись и монтаж подкаста.", shape:"wide",
    items:[yt("QXucdwinLlM")]},
   {id:"auto", name:"Автомобили", note:"Автомобильные съёмки.", shape:"single",
@@ -438,7 +445,7 @@ const main = document.getElementById("work"), nav = document.getElementById("nav
 CATS.forEach(c => {
   const s = document.createElement("section");
   s.className = "cat"; s.id = c.id; s.setAttribute("aria-labelledby", c.id+"-h");
-  s.innerHTML = `<div class="wrap"><div class="cat-head"><div><h2 id="${c.id}-h">${c.name}</h2><p>${c.note}</p></div>${(n => `<span class="mono">${n} ${ru(n)}</span>`)((c.items||c.brands.flatMap(b=>b.items)).length + (c.shape==="ai" ? MG.length + AI_GEN.length : 0))}</div><div class="body"></div></div>`;
+  s.innerHTML = `<div class="wrap"><div class="cat-head"><div><div class="ch-title"><h2 id="${c.id}-h">${c.name}</h2>${c.logos ? `<span class="ch-logos">${c.logos.map(l => `<img src="${l.src}" alt="${l.alt}" title="${l.alt}" loading="lazy">`).join("")}</span>` : ""}</div><p>${c.note}</p></div>${(n => `<span class="mono">${n} ${ru(n)}</span>`)((c.items||c.brands.flatMap(b=>b.items)).length + (c.shape==="ai" ? MG.length + AI_GEN.length : 0))}</div><div class="body"></div></div>`;
   const body = s.querySelector(".body");
   if (c.shape === "auto"){
     body.className = "auto-split";
@@ -532,6 +539,7 @@ CATS.forEach(c => {
       const blk = document.createElement("div"); blk.className = "brand-block"; blk.id = "brand-" + b.id; blk.hidden = true;
       const verts = b.items.filter(it => it.local && it.v), rest = b.items.filter(it => !(it.local && it.v));
       blk.innerHTML = `<a class="back" href="#ads">← Все бренды</a><div class="brand-head"><h3>${b.name} <em>${b.em}</em></h3>${verts.length > 2 ? `<div class="car-btns"><button type="button" aria-label="Назад">←</button><button type="button" aria-label="Вперёд">→</button></div>` : `<span class="mono">${n} ${ru(n)}</span>`}</div>`;
+      if (b.note) blk.insertAdjacentHTML("beforeend", `<p class="brand-note">${b.note}</p>`);
       if (verts.length){
         const car = document.createElement("div"); car.className = "car";
         const tr = document.createElement("div"); tr.className = "car-track";
@@ -560,6 +568,14 @@ CATS.forEach(c => {
     const bottom = document.createElement("div"); bottom.className = "grid g-tall"; bottom.style.marginTop = "16px";
     c.items.forEach((it,i) => (it.yt ? top : bottom).appendChild(card(it,i, it.yt ? "r169" : "r45")));
     body.append(top, bottom);
+  } else if (c.shape === "ytcar"){
+    const head = document.createElement("div"); head.className = "car-row";
+    head.innerHTML = `<div class="car-btns"><button type="button" aria-label="Назад">←</button><button type="button" aria-label="Вперёд">→</button></div>`;
+    const car = document.createElement("div"); car.className = "car";
+    const tr = document.createElement("div"); tr.className = "car-track wide";
+    c.items.forEach((it,i) => tr.appendChild(card(it,i,"r169")));
+    car.append(tr); body.append(head, car);
+    carousel(tr, head.querySelectorAll(".car-btns button"));
   } else if (c.shape === "single"){
     body.className = "single";
     c.items.forEach((it,i) => body.appendChild(card(it,i,"r169")));
